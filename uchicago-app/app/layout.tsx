@@ -6,7 +6,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "UChicago Student Hub",
+  title: "UChicago Pulse",
   description: "Your one-stop destination for campus life",
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({
             <div className="flex justify-between items-center h-16">
               <div className="flex-shrink-0">
                 <span className="retro-text text-2xl font-bold text-primary">
-                  UChicago Hub
+                  UChicago Pulse
                 </span>
               </div>
               <div className="flex items-center space-x-8 ml-auto">
@@ -53,7 +53,7 @@ export default function RootLayout({
         <footer className="bg-white dark:bg-gray-900 border-t-4 border-accent">
           <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <p className="text-center text-gray-500 dark:text-gray-400 text-sm retro-text">
-              © {new Date().getFullYear()} UChicago Student Hub
+              © {new Date().getFullYear()} UChicago Pulse
             </p>
           </div>
         </footer>

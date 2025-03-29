@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center min-h-screen bg-white text-black p-8">
       <h1 className="text-6xl font-bold mb-4 text-black">
-        Welcome to UChicago Hub
+        Welcome to UChicago Pulse
       </h1>
       <p className="text-xl mb-16 text-gray-600">
         Your central platform for campus life
