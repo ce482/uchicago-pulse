@@ -22,13 +22,16 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex justify-between items-center h-16">
               <div className="flex-shrink-0">
-                <span className="retro-text text-2xl font-bold text-primary">
+                <Link
+                  href="/"
+                  className="retro-text text-2xl font-bold text-primary"
+                >
                   UChicago Pulse
-                </span>
+                </Link>
               </div>
               <div className="flex items-center space-x-8 ml-auto">
                 <Link
-                  href="/"
+                  href="/map"
                   className="retro-link text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
                 >
                   Map

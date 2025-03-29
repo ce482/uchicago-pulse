@@ -122,7 +122,7 @@ export const diningLocations: DiningLocation[] = [
     id: "pret",
     name: "Pret A Manger",
     type: "cafe",
-    coordinates: { lat: 41.79474694143852, lng: -87.59734477633121 },
+    coordinates: { lat: 41.79112949595983, lng: -87.59822996457885 },
     hours: {
       "Monday-Friday": "8:00 AM – 11:00 PM",
       "Saturday-Sunday": "9:00 AM – 11:00 PM",

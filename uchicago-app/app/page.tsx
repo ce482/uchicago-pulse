@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="flex flex-col items-center min-h-screen bg-white text-black p-8">
@@ -18,12 +20,12 @@ export default function Home() {
           <p className="text-gray-600">
             Check real-time occupancy at dining halls and cafes across campus
           </p>
-          <a
+          <Link
             href="/map"
             className="mt-4 inline-block text-blue-600 hover:text-blue-800"
           >
             View Map →
-          </a>
+          </Link>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -31,12 +33,12 @@ export default function Home() {
           <p className="text-gray-600">
             Discover upcoming events, parties, and social gatherings
           </p>
-          <a
+          <Link
             href="/events"
             className="mt-4 inline-block text-blue-600 hover:text-blue-800"
           >
             View Events →
-          </a>
+          </Link>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -44,12 +46,12 @@ export default function Home() {
           <p className="text-gray-600">
             Connect with classmates and join study groups
           </p>
-          <a
+          <Link
             href="/communities"
             className="mt-4 inline-block text-blue-600 hover:text-blue-800"
           >
             Join Communities →
-          </a>
+          </Link>
         </div>
       </div>
     </div>
