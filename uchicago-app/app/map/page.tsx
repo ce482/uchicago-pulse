@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   GoogleMap,
-  LoadScript,
+  useJsApiLoader,
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
@@ -19,11 +19,20 @@ const center = {
   lng: -87.5997,
 };
 
+const libraries = ["places"];
+
 export default function MapPage() {
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: "AIzaSyAlKrahXvremjpKS-x68Bwx_3evApN97RA",
+    libraries: libraries as any,
+  });
+
   const [selectedLocation, setSelectedLocation] =
     useState<DiningLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLocations, setFilteredLocations] = useState(diningLocations);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   useEffect(() => {
     const filtered = diningLocations.filter(
@@ -33,6 +42,14 @@ export default function MapPage() {
     );
     setFilteredLocations(filtered);
   }, [searchQuery]);
+
+  const onLoad = (map: google.maps.Map) => {
+    setMap(map);
+  };
+
+  const onUnmount = () => {
+    setMap(null);
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white">
@@ -56,11 +73,13 @@ export default function MapPage() {
       </div>
 
       <div className="w-full h-[80vh] relative">
-        <LoadScript googleMapsApiKey="AIzaSyAlKrahXvremjpKS-x68Bwx_3evApN97RA">
+        {isLoaded ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
             zoom={15}
+            onLoad={onLoad}
+            onUnmount={onUnmount}
           >
             {filteredLocations.map((location) => (
               <Marker
@@ -95,7 +114,11 @@ export default function MapPage() {
               </InfoWindow>
             )}
           </GoogleMap>
-        </LoadScript>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-black">Loading map...</div>
+          </div>
+        )}
       </div>
     </div>
   );
