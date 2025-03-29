@@ -115,7 +115,7 @@ export const diningLocations: DiningLocation[] = [
   {
     id: "peaches",
     name: "Peaches",
-    type: "Cafe",
+    type: "cafe",
     coordinates: { lat: 41.791065292061596, lng: -87.60267307937721 },
     hours: {
       Monday: "8:00 AM - 4:00 PM",
