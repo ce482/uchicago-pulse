@@ -9,6 +9,12 @@ export interface DiningLocation {
   hours: {
     [key: string]: string;
   };
+  busyness?: {
+    current: number; // 0-100
+    lastUpdated: string;
+    totalRatings: number;
+  };
+  radius?: number; // in meters, for geofencing
 }
 
 export const diningLocations: DiningLocation[] = [
@@ -101,12 +107,18 @@ export const diningLocations: DiningLocation[] = [
     },
   },
   {
-    id: "peachs",
-    name: "Peach's Café",
-    type: "cafe",
-    coordinates: { lat: 41.79563527357255, lng: -87.60436593702687 },
+    id: "peaches",
+    name: "Peaches",
+    type: "Cafe",
+    coordinates: { lat: 41.791065292061596, lng: -87.60267307937721 },
     hours: {
-      "Monday-Friday": "8:30 AM – 6:00 PM",
+      Monday: "8:00 AM - 4:00 PM",
+      Tuesday: "8:00 AM - 4:00 PM",
+      Wednesday: "8:00 AM - 4:00 PM",
+      Thursday: "8:00 AM - 4:00 PM",
+      Friday: "8:00 AM - 4:00 PM",
+      Saturday: "Closed",
+      Sunday: "Closed",
     },
   },
   {
