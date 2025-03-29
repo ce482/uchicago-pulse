@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   GoogleMap,
   LoadScript,
@@ -22,12 +22,39 @@ const center = {
 export default function MapPage() {
   const [selectedLocation, setSelectedLocation] =
     useState<DiningLocation | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredLocations, setFilteredLocations] = useState(diningLocations);
+
+  useEffect(() => {
+    const filtered = diningLocations.filter(
+      (location) =>
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        location.type.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredLocations(filtered);
+  }, [searchQuery]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white">
       <h1 className="text-4xl font-bold my-6 text-black">
         UChicago Dining Map
       </h1>
+
+      {/* Search Bar */}
+      <div className="w-full max-w-2xl px-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search for dining locations..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+        />
+        <div className="mt-2 text-sm text-gray-600">
+          Found {filteredLocations.length} location
+          {filteredLocations.length !== 1 ? "s" : ""}
+        </div>
+      </div>
+
       <div className="w-full h-[80vh] relative">
         <LoadScript googleMapsApiKey="AIzaSyAlKrahXvremjpKS-x68Bwx_3evApN97RA">
           <GoogleMap
@@ -35,7 +62,7 @@ export default function MapPage() {
             center={center}
             zoom={15}
           >
-            {diningLocations.map((location) => (
+            {filteredLocations.map((location) => (
               <Marker
                 key={location.id}
                 position={location.coordinates}
