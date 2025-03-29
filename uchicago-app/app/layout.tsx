@@ -19,32 +19,32 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
         <nav className="bg-white dark:bg-gray-900 shadow-lg border-b-4 border-accent">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex justify-between items-center h-16">
+          <div className="w-full max-w-7xl mx-auto px-2 sm:px-4">
+            <div className="flex justify-between items-center h-16 sm:h-20">
               <div className="flex-shrink-0">
                 <Link
                   href="/"
-                  className="retro-text text-2xl font-bold text-primary"
+                  className="text-lg sm:text-2xl font-bold text-primary truncate"
                 >
                   UChicago Pulse
                 </Link>
               </div>
-              <div className="flex items-center space-x-8 ml-auto">
+              <div className="flex items-center space-x-3 sm:space-x-8">
                 <Link
                   href="/map"
-                  className="retro-link text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
                 >
                   Map
                 </Link>
                 <Link
                   href="/events"
-                  className="retro-link text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
                 >
                   Events
                 </Link>
                 <Link
                   href="/communities"
-                  className="retro-link text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
                 >
                   Communities
                 </Link>
@@ -52,10 +52,12 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        <main className="flex-grow">{children}</main>
+        <main className="flex-grow w-full max-w-full overflow-x-hidden">
+          {children}
+        </main>
         <footer className="bg-white dark:bg-gray-900 border-t-4 border-accent">
-          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-gray-500 dark:text-gray-400 text-sm retro-text">
+          <div className="w-full max-w-7xl mx-auto py-4 sm:py-6 px-2 sm:px-6">
+            <p className="text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
               © {new Date().getFullYear()} UChicago Pulse
             </p>
           </div>

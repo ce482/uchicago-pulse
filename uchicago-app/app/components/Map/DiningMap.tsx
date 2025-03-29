@@ -13,6 +13,8 @@ import {
   DiningLocation,
   BusynessLevel,
 } from "../../../types/dining";
+import { usePlatform } from "../../hooks/usePlatform";
+import { getPlatformStyles } from "../../styles/platform";
 
 const containerStyle = {
   width: "100%",
@@ -27,6 +29,9 @@ const center = {
 const libraries: Libraries = ["places"];
 
 export default function DiningMap() {
+  const { platform, isMobile } = usePlatform();
+  const platformStyles = getPlatformStyles(platform);
+
   const handleError = (error: Error) => {
     console.error("Error loading map:", error);
   };
@@ -79,13 +84,13 @@ export default function DiningMap() {
   const getBusynessColor = (level: BusynessLevel | null) => {
     switch (level) {
       case "not busy":
-        return "text-green-500";
+        return "text-green-600";
       case "somewhat busy":
-        return "text-yellow-500";
+        return "text-yellow-600";
       case "very busy":
-        return "text-red-500";
+        return "text-red-600";
       default:
-        return "text-gray-500";
+        return "text-gray-600";
     }
   };
 
@@ -101,23 +106,32 @@ export default function DiningMap() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Search Bar - Made more compact on mobile */}
-      <div className="w-full px-2 sm:px-4 mb-2 sm:mb-4">
+      {/* Search Bar */}
+      <div
+        className={`w-full px-${isMobile ? "2" : "4"} mb-${
+          isMobile ? "2" : "4"
+        }`}
+      >
         <input
           type="text"
           placeholder="Search for dining locations..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+          className={`w-full border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black
+            ${isMobile ? "p-2 text-sm" : "p-3 text-base"}`}
+          style={platformStyles.input}
         />
-        <div className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600">
+        <div
+          className={`mt-${isMobile ? "1" : "2"} text-${
+            isMobile ? "xs" : "sm"
+          } text-gray-600`}
+        >
           Found {filteredLocations.length} location
           {filteredLocations.length !== 1 ? "s" : ""}
         </div>
       </div>
 
-      {/* Map Container - Adjusted height for mobile */}
-      <div className="w-full h-[70vh] sm:h-[80vh] relative">
+      <div style={{ ...platformStyles.map, width: "100%" }}>
         {isLoaded ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
@@ -140,57 +154,79 @@ export default function DiningMap() {
                 onCloseClick={() => setSelectedLocation(null)}
                 options={{
                   pixelOffset: new google.maps.Size(0, -30),
-                  maxWidth: window.innerWidth < 640 ? 260 : 320, // Smaller width on mobile
-                  minWidth: window.innerWidth < 640 ? 220 : 280,
+                  maxWidth: isMobile ? 300 : 320,
+                  minWidth: isMobile ? 280 : 300,
                 }}
               >
-                <div className="p-0 bg-white max-w-full">
-                  <h2 className="text-lg sm:text-xl font-bold text-black px-2 pt-1">
+                <div
+                  className="bg-white w-full overflow-y-auto"
+                  style={{
+                    ...platformStyles.modal,
+                    maxHeight: isMobile ? "60vh" : "70vh",
+                  }}
+                >
+                  <h2
+                    className={`font-bold text-black mb-2 ${
+                      isMobile ? "text-lg" : "text-xl"
+                    }`}
+                  >
                     {selectedLocation.name}
                   </h2>
 
-                  {/* Busyness Status - Compact on mobile */}
-                  <div className="px-2 mb-2">
-                    <h3 className="text-base sm:text-lg font-semibold text-black mb-1">
+                  {/* Busyness Status */}
+                  <div className="mb-3">
+                    <h3
+                      className={`font-semibold text-black mb-1 ${
+                        isMobile ? "text-sm" : "text-base"
+                      }`}
+                    >
                       Current Status:
                     </h3>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                    <div className="flex flex-col space-y-1">
                       <span
-                        className={`text-base sm:text-lg font-medium ${getBusynessColor(
+                        className={`${
+                          isMobile ? "text-sm" : "text-base"
+                        } font-medium ${getBusynessColor(
                           getBusynessLevel(selectedLocation)
                         )}`}
                       >
                         {getBusynessLevel(selectedLocation) || "No data"}
                       </span>
-                      <span className="text-xs sm:text-sm text-gray-500">
+                      <span className="text-xs text-gray-500">
                         {formatBusynessStats(selectedLocation)}
                       </span>
+                      {selectedLocation.busyness?.lastUpdated && (
+                        <p className="text-xs text-gray-500">
+                          Last updated:{" "}
+                          {new Date(
+                            selectedLocation.busyness.lastUpdated
+                          ).toLocaleString()}
+                        </p>
+                      )}
                     </div>
-                    {selectedLocation.busyness?.lastUpdated && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Last updated:{" "}
-                        {new Date(
-                          selectedLocation.busyness.lastUpdated
-                        ).toLocaleString()}
-                      </p>
-                    )}
                   </div>
 
-                  {/* Hours - Compact on mobile */}
-                  <div className="px-2 pb-2">
-                    <h3 className="text-base sm:text-lg font-semibold text-black mb-1">
+                  {/* Hours */}
+                  <div>
+                    <h3
+                      className={`font-semibold text-black mb-1 ${
+                        isMobile ? "text-sm" : "text-base"
+                      }`}
+                    >
                       Hours:
                     </h3>
-                    {Object.entries(selectedLocation.hours).map(
-                      ([day, hours]) => (
-                        <p
-                          key={day}
-                          className="text-sm sm:text-base text-gray-700"
-                        >
-                          <span className="font-medium">{day}:</span> {hours}
-                        </p>
-                      )
-                    )}
+                    <div className="space-y-1">
+                      {Object.entries(selectedLocation.hours).map(
+                        ([day, hours]) => (
+                          <p
+                            key={day}
+                            className="text-xs sm:text-sm text-gray-700"
+                          >
+                            <span className="font-medium">{day}:</span> {hours}
+                          </p>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </InfoWindow>

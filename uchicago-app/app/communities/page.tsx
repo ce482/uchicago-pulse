@@ -53,7 +53,9 @@ export default function CommunitiesPage() {
 
   return (
     <div className="max-w-4xl mx-auto bg-gray-50 min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Communities</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">
+        Communities
+      </h1>
 
       <div className="mb-6">
         <input

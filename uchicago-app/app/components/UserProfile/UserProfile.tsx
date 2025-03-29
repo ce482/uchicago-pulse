@@ -35,8 +35,55 @@ export default function UserProfile({
   const [ratingHistory, setRatingHistory] = useState<RatingHistory[]>([]);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+  const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
+
+  // Function to check if a location has been rated recently (within last 30 minutes)
+  const hasRecentRating = (locationId: string) => {
+    const recentRating = ratingHistory.find(
+      (rating) =>
+        rating.locationId === locationId &&
+        new Date().getTime() - new Date(rating.timestamp).getTime() <
+          30 * 60 * 1000 // 30 minutes
+    );
+    return !!recentRating;
+  };
+
+  const handleLocationError = (
+    error: GeolocationPositionError | Error | unknown
+  ) => {
+    let errorMessage = "Error getting location.";
+
+    if (error instanceof GeolocationPositionError) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage =
+            "Location access was denied. Please enable location access in your browser settings and reload the page.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage =
+            "Unable to determine your location. Please check your device's location settings.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please try again.";
+          break;
+        default:
+          errorMessage = "An error occurred while getting your location.";
+      }
+    } else if (error instanceof Error) {
+      errorMessage =
+        error.message || "An unexpected error occurred with location services.";
+    } else if (error && typeof error === "object" && "message" in error) {
+      errorMessage = String(error.message);
+    }
+
+    setLocationError(errorMessage);
+    setIsRequestingLocation(false);
+    console.error("Location error:", { error, message: errorMessage });
+  };
 
   const requestLocationPermission = async () => {
+    if (hasRequestedPermission) return;
+
     setIsRequestingLocation(true);
     setLocationError(null);
 
@@ -47,67 +94,61 @@ export default function UserProfile({
     }
 
     try {
-      const permissionStatus = await navigator.permissions.query({
-        name: "geolocation" as PermissionName,
-      });
-
-      if (permissionStatus.state === "denied") {
-        setLocationError(
-          "Location access is blocked. Please enable location access in your device settings:\n" +
-            "iOS: Settings > Privacy > Location Services > Safari\n" +
-            "Android: Settings > Privacy > Location > Chrome"
-        );
-        setIsRequestingLocation(false);
-        return;
+      // First try to get permission status
+      try {
+        const permissionResult = await navigator.permissions.query({
+          name: "geolocation",
+        });
+        if (permissionResult.state === "denied") {
+          throw new Error(
+            "Location permission is denied. Please enable location access in your browser settings."
+          );
+        }
+      } catch (permError) {
+        // If we can't check permissions, continue to try getting location
+        console.warn("Could not check location permissions:", permError);
       }
 
+      // Request the location
       const position = await new Promise<GeolocationPosition>(
         (resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
-          });
+          const timeoutId = setTimeout(() => {
+            reject(new Error("Location request timed out. Please try again."));
+          }, 10000);
+
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              clearTimeout(timeoutId);
+              resolve(pos);
+            },
+            (err) => {
+              clearTimeout(timeoutId);
+              reject(err);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            }
+          );
         }
       );
 
+      // If we get here, we have permission and a valid position
+      setHasRequestedPermission(true);
       const location = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-
       setUserLocation(location);
       onLocationUpdate?.(location);
+
+      // Start continuous tracking
       startLocationTracking();
       setIsRequestingLocation(false);
     } catch (error) {
-      handleLocationError(error as GeolocationPositionError);
+      handleLocationError(error);
     }
-  };
-
-  const handleLocationError = (error: GeolocationPositionError) => {
-    let errorMessage = "Error getting location.";
-    if (error.code === 1) {
-      errorMessage =
-        "Location access was denied. Please follow these steps:\n" +
-        "iOS: Settings > Privacy > Location Services > Safari\n" +
-        "Android: Settings > Privacy > Location > Chrome\n" +
-        "Then reload the page and try again.";
-    } else if (error.code === 2) {
-      errorMessage =
-        "Unable to determine your location. Please check that:\n" +
-        "1. Your device's location is turned on\n" +
-        "2. You have a clear view of the sky\n" +
-        "3. You're not in airplane mode";
-    } else if (error.code === 3) {
-      errorMessage =
-        "Location request timed out. Please check:\n" +
-        "1. Your internet connection\n" +
-        "2. That you're not in a building blocking GPS signals";
-    }
-    setLocationError(errorMessage);
-    setIsRequestingLocation(false);
-    console.error("Location error:", error);
   };
 
   const startLocationTracking = () => {
@@ -116,57 +157,38 @@ export default function UserProfile({
       return;
     }
 
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setUserLocation(location);
-        setLocationError(null);
-        onLocationUpdate?.(location);
-        checkNearbyLocations(location);
-      },
-      (error) => {
-        let errorMessage = "Error tracking location.";
-        if (error.code === 1) {
-          errorMessage =
-            "Location access was denied. Please follow these steps:\n" +
-            "iOS: Settings > Privacy > Location Services > Safari\n" +
-            "Android: Settings > Privacy > Location > Chrome";
-        } else if (error.code === 2) {
-          errorMessage =
-            "Unable to determine your location. Please check that:\n" +
-            "1. Your device's location is turned on\n" +
-            "2. You have a clear view of the sky\n" +
-            "3. You're not in airplane mode";
-        } else if (error.code === 3) {
-          errorMessage =
-            "Location request timed out. Please check:\n" +
-            "1. Your internet connection\n" +
-            "2. That you're not in a building blocking GPS signals";
+    try {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(location);
+          setLocationError(null);
+          onLocationUpdate?.(location);
+          checkNearbyLocations(location);
+        },
+        (error) => handleLocationError(error),
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         }
-        setLocationError(errorMessage);
-        console.error("Location error:", error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000, // Increased timeout for slower mobile connections
-        maximumAge: 0,
-      }
-    );
+      );
 
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
+      return () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      };
+    } catch (error) {
+      handleLocationError(
+        error instanceof Error
+          ? error
+          : new Error("Failed to start location tracking")
+      );
+      return () => {};
+    }
   };
-
-  useEffect(() => {
-    requestLocationPermission();
-    return () => {
-      // Cleanup will be handled by startLocationTracking's return function
-    };
-  }, []); // requestLocationPermission is stable and doesn't need to be in deps
 
   const checkNearbyLocations = (location: { lat: number; lng: number }) => {
     diningLocations.forEach((diningLocation) => {
@@ -177,8 +199,8 @@ export default function UserProfile({
         diningLocation.coordinates.lng
       );
 
-      // If user is within 50 meters of a location
-      if (distance <= 0.05) {
+      // If user is within 50 meters of a location and hasn't rated it recently
+      if (distance <= 0.05 && !hasRecentRating(diningLocation.id)) {
         setCurrentLocation(diningLocation);
         setShowRatingModal(true);
       }
@@ -229,16 +251,25 @@ export default function UserProfile({
     }
   };
 
+  useEffect(() => {
+    // Request location permission when component mounts
+    requestLocationPermission();
+
+    return () => {
+      // Cleanup will be handled by startLocationTracking's return function
+    };
+  }, []); // Empty dependency array since we only want this to run once
+
   return (
-    <div className="fixed right-4 top-4 z-50">
+    <div className="fixed right-4 top-18 z-50">
       {/* Profile Button */}
       <button
         onClick={() => setShowProfile(!showProfile)}
-        className="bg-white rounded-lg shadow-lg p-3 hover:bg-gray-50 transition-colors"
+        className="bg-red-900 rounded-lg shadow-xl p-3 hover:bg-red-950 transition-colors"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-gray-600"
+          className="h-6 w-6 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -254,7 +285,7 @@ export default function UserProfile({
 
       {/* Profile Panel */}
       {showProfile && (
-        <div className="absolute right-0 top-16 w-80 bg-white rounded-lg shadow-xl p-4">
+        <div className="absolute right-0 mt-4 w-80 bg-white rounded-lg shadow-xl p-4">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-xl font-semibold">

@@ -19,7 +19,7 @@ const mockEvents: Event[] = [
     date: "2024-03-30",
     time: "9:00 PM",
     location: "Alpha Delta Phi House",
-    type: "frat",
+    type: "social",
     description: "Join us for a night of fun and socializing!",
   },
   {
@@ -43,14 +43,16 @@ export default function EventsPage() {
       : mockEvents.filter((event) => event.type === selectedType);
 
   return (
-    <div className="max-w-4xl mx-auto bg-gray-50 min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Campus Events</h1>
+    <div className="max-w-4xl mx-auto bg-gray-50 min-h-screen p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">
+        Campus Events
+      </h1>
 
       <div className="mb-6">
         <div className="flex space-x-4">
           <button
             onClick={() => setSelectedType("all")}
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
               selectedType === "all"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -59,18 +61,8 @@ export default function EventsPage() {
             All Events
           </button>
           <button
-            onClick={() => setSelectedType("frat")}
-            className={`px-4 py-2 rounded-full ${
-              selectedType === "frat"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Frat Events
-          </button>
-          <button
             onClick={() => setSelectedType("academic")}
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
               selectedType === "academic"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -80,7 +72,7 @@ export default function EventsPage() {
           </button>
           <button
             onClick={() => setSelectedType("social")}
-            className={`px-4 py-2 rounded-full ${
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
               selectedType === "social"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -106,9 +98,7 @@ export default function EventsPage() {
               </div>
               <span
                 className={`px-3 py-1 rounded-full text-sm ${
-                  event.type === "frat"
-                    ? "bg-red-100 text-red-800"
-                    : event.type === "academic"
+                  event.type === "academic"
                     ? "bg-blue-100 text-blue-800"
                     : "bg-green-100 text-green-800"
                 }`}
