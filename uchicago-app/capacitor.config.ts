@@ -1,7 +1,7 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "edu.uchicago.dining",
+  appId: "com.uchicagodining.app",
   appName: "UChicago Dining",
   webDir: "out",
   server: {

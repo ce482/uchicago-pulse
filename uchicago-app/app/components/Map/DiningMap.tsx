@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   GoogleMap,
   useJsApiLoader,
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
+import { Libraries } from "@googlemaps/js-api-loader";
 import {
   diningLocations,
   DiningLocation,
@@ -23,20 +24,23 @@ const center = {
   lng: -87.5997,
 };
 
-const libraries = ["places"];
+const libraries: Libraries = ["places"];
 
 export default function DiningMap() {
+  const handleError = (error: Error) => {
+    console.error("Error loading map:", error);
+  };
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries: libraries as any,
+    libraries,
   });
 
   const [selectedLocation, setSelectedLocation] =
     useState<DiningLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLocations, setFilteredLocations] = useState(diningLocations);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   useEffect(() => {
     const filtered = diningLocations.filter(
@@ -48,38 +52,28 @@ export default function DiningMap() {
   }, [searchQuery]);
 
   const onLoad = (map: google.maps.Map) => {
-    setMap(map);
+    // Remove unused map variable if not needed
   };
 
   const onUnmount = () => {
-    setMap(null);
+    // Remove unused map variable if not needed
   };
 
   const getBusynessLevel = (location: DiningLocation): BusynessLevel | null => {
-    if (!location.busyness?.ratings) return null;
+    if (!location.busyness) return null;
 
-    const { notBusy, somewhatBusy, veryBusy } = location.busyness.ratings;
-    const total = notBusy + somewhatBusy + veryBusy;
+    const { notBusyCount, somewhatBusyCount, veryBusyCount } =
+      location.busyness;
+    const total = notBusyCount + somewhatBusyCount + veryBusyCount;
 
     if (total === 0) return null;
 
-    const notBusyPercent = (notBusy / total) * 100;
-    const somewhatBusyPercent = (somewhatBusy / total) * 100;
-    const veryBusyPercent = (veryBusy / total) * 100;
+    // Find the highest count
+    const max = Math.max(notBusyCount, somewhatBusyCount, veryBusyCount);
 
-    if (
-      notBusyPercent > somewhatBusyPercent &&
-      notBusyPercent > veryBusyPercent
-    ) {
-      return "not busy";
-    } else if (
-      somewhatBusyPercent > notBusyPercent &&
-      somewhatBusyPercent > veryBusyPercent
-    ) {
-      return "somewhat busy";
-    } else {
-      return "very busy";
-    }
+    if (max === notBusyCount) return "not busy";
+    if (max === somewhatBusyCount) return "somewhat busy";
+    return "very busy";
   };
 
   const getBusynessColor = (level: BusynessLevel | null) => {
@@ -95,15 +89,14 @@ export default function DiningMap() {
     }
   };
 
-  const formatBusynessStats = (location: DiningLocation) => {
-    if (!location.busyness?.ratings) return "No ratings yet";
+  const formatBusynessStats = (location: DiningLocation): string => {
+    if (!location.busyness) return "No ratings yet";
 
-    const { notBusy, somewhatBusy, veryBusy } = location.busyness.ratings;
-    const total = notBusy + somewhatBusy + veryBusy;
+    const { notBusyCount, somewhatBusyCount, veryBusyCount } =
+      location.busyness;
+    const total = notBusyCount + somewhatBusyCount + veryBusyCount;
 
-    if (total === 0) return "No ratings yet";
-
-    return `Based on ${total} rating${total === 1 ? "" : "s"}`;
+    return `${total} rating${total !== 1 ? "s" : ""}`;
   };
 
   return (
@@ -149,7 +142,6 @@ export default function DiningMap() {
                   pixelOffset: new google.maps.Size(0, -30),
                   maxWidth: window.innerWidth < 640 ? 260 : 320, // Smaller width on mobile
                   minWidth: window.innerWidth < 640 ? 220 : 280,
-                  padding: 0,
                 }}
               >
                 <div className="p-0 bg-white max-w-full">

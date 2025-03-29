@@ -1,9 +1,10 @@
+export type DiningLocationType = "dining" | "cafe";
 export type BusynessLevel = "not busy" | "somewhat busy" | "very busy";
 
 export interface DiningLocation {
   id: string;
   name: string;
-  type: "dining" | "cafe";
+  type: DiningLocationType;
   coordinates: {
     lat: number;
     lng: number;
@@ -12,12 +13,9 @@ export interface DiningLocation {
     [key: string]: string;
   };
   busyness?: {
-    level: BusynessLevel;
-    ratings: {
-      notBusy: number;
-      somewhatBusy: number;
-      veryBusy: number;
-    };
+    notBusyCount: number;
+    somewhatBusyCount: number;
+    veryBusyCount: number;
     lastUpdated: string;
   };
   radius?: number; // in meters, for geofencing
@@ -115,7 +113,7 @@ export const diningLocations: DiningLocation[] = [
   {
     id: "peaches",
     name: "Peaches",
-    type: "Cafe",
+    type: "cafe",
     coordinates: { lat: 41.791065292061596, lng: -87.60267307937721 },
     hours: {
       Monday: "8:00 AM - 4:00 PM",
