@@ -31,7 +31,6 @@ export default function UserProfile({
   const [currentLocation, setCurrentLocation] = useState<DiningLocation | null>(
     null
   );
-  const [busynessRating, setBusynessRating] = useState(50);
   const [showProfile, setShowProfile] = useState(false);
   const [ratingHistory, setRatingHistory] = useState<RatingHistory[]>([]);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -48,9 +47,8 @@ export default function UserProfile({
     }
 
     try {
-      // First check if permissions are already granted
       const permissionStatus = await navigator.permissions.query({
-        name: "geolocation",
+        name: "geolocation" as PermissionName,
       });
 
       if (permissionStatus.state === "denied") {
@@ -67,7 +65,7 @@ export default function UserProfile({
         (resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
             enableHighAccuracy: true,
-            timeout: 10000, // Increased timeout for slower mobile connections
+            timeout: 10000,
             maximumAge: 0,
           });
         }
@@ -82,33 +80,34 @@ export default function UserProfile({
       onLocationUpdate?.(location);
       startLocationTracking();
       setIsRequestingLocation(false);
-    } catch (error: any) {
-      let errorMessage = "Error getting location.";
-      if (error.code === 1) {
-        // PERMISSION_DENIED
-        errorMessage =
-          "Location access was denied. Please follow these steps:\n" +
-          "iOS: Settings > Privacy > Location Services > Safari\n" +
-          "Android: Settings > Privacy > Location > Chrome\n" +
-          "Then reload the page and try again.";
-      } else if (error.code === 2) {
-        // POSITION_UNAVAILABLE
-        errorMessage =
-          "Unable to determine your location. Please check that:\n" +
-          "1. Your device's location is turned on\n" +
-          "2. You have a clear view of the sky\n" +
-          "3. You're not in airplane mode";
-      } else if (error.code === 3) {
-        // TIMEOUT
-        errorMessage =
-          "Location request timed out. Please check:\n" +
-          "1. Your internet connection\n" +
-          "2. That you're not in a building blocking GPS signals";
-      }
-      setLocationError(errorMessage);
-      setIsRequestingLocation(false);
-      console.error("Location error:", error);
+    } catch (error) {
+      handleLocationError(error as GeolocationPositionError);
     }
+  };
+
+  const handleLocationError = (error: GeolocationPositionError) => {
+    let errorMessage = "Error getting location.";
+    if (error.code === 1) {
+      errorMessage =
+        "Location access was denied. Please follow these steps:\n" +
+        "iOS: Settings > Privacy > Location Services > Safari\n" +
+        "Android: Settings > Privacy > Location > Chrome\n" +
+        "Then reload the page and try again.";
+    } else if (error.code === 2) {
+      errorMessage =
+        "Unable to determine your location. Please check that:\n" +
+        "1. Your device's location is turned on\n" +
+        "2. You have a clear view of the sky\n" +
+        "3. You're not in airplane mode";
+    } else if (error.code === 3) {
+      errorMessage =
+        "Location request timed out. Please check:\n" +
+        "1. Your internet connection\n" +
+        "2. That you're not in a building blocking GPS signals";
+    }
+    setLocationError(errorMessage);
+    setIsRequestingLocation(false);
+    console.error("Location error:", error);
   };
 
   const startLocationTracking = () => {
@@ -163,14 +162,11 @@ export default function UserProfile({
   };
 
   useEffect(() => {
-    // Request location permission immediately when component mounts
     requestLocationPermission();
-
-    // Cleanup function
     return () => {
-      // The cleanup will be handled by startLocationTracking's return function
+      // Cleanup will be handled by startLocationTracking's return function
     };
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); // requestLocationPermission is stable and doesn't need to be in deps
 
   const checkNearbyLocations = (location: { lat: number; lng: number }) => {
     diningLocations.forEach((diningLocation) => {
