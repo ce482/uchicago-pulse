@@ -1,20 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { diningLocations, DiningLocation } from "../../../types/dining";
+import {
+  diningLocations,
+  DiningLocation,
+  BusynessLevel,
+} from "../../../types/dining";
 
 interface UserProfileProps {
   onLocationUpdate?: (location: { lat: number; lng: number }) => void;
+  onRatingSubmit?: (locationId: string, rating: BusynessLevel) => void;
 }
 
 interface RatingHistory {
   locationId: string;
   locationName: string;
-  rating: number;
+  rating: BusynessLevel;
   timestamp: string;
 }
 
-export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
+export default function UserProfile({
+  onLocationUpdate,
+  onRatingSubmit,
+}: UserProfileProps) {
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -40,31 +48,62 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
     }
 
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        });
+      // First check if permissions are already granted
+      const permissionStatus = await navigator.permissions.query({
+        name: "geolocation",
       });
+
+      if (permissionStatus.state === "denied") {
+        setLocationError(
+          "Location access is blocked. Please enable location access in your device settings:\n" +
+            "iOS: Settings > Privacy > Location Services > Safari\n" +
+            "Android: Settings > Privacy > Location > Chrome"
+        );
+        setIsRequestingLocation(false);
+        return;
+      }
+
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000, // Increased timeout for slower mobile connections
+            maximumAge: 0,
+          });
+        }
+      );
 
       const location = {
         lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lng: position.coords.longitude,
       };
-      
+
       setUserLocation(location);
       onLocationUpdate?.(location);
       startLocationTracking();
       setIsRequestingLocation(false);
     } catch (error: any) {
       let errorMessage = "Error getting location.";
-      if (error.code === 1) { // PERMISSION_DENIED
-        errorMessage = "Location access was denied. Please enable location access in your browser settings and try again.";
-      } else if (error.code === 2) { // POSITION_UNAVAILABLE
-        errorMessage = "Location information is unavailable. Please check your device's location settings.";
-      } else if (error.code === 3) { // TIMEOUT
-        errorMessage = "Location request timed out. Please try again.";
+      if (error.code === 1) {
+        // PERMISSION_DENIED
+        errorMessage =
+          "Location access was denied. Please follow these steps:\n" +
+          "iOS: Settings > Privacy > Location Services > Safari\n" +
+          "Android: Settings > Privacy > Location > Chrome\n" +
+          "Then reload the page and try again.";
+      } else if (error.code === 2) {
+        // POSITION_UNAVAILABLE
+        errorMessage =
+          "Unable to determine your location. Please check that:\n" +
+          "1. Your device's location is turned on\n" +
+          "2. You have a clear view of the sky\n" +
+          "3. You're not in airplane mode";
+      } else if (error.code === 3) {
+        // TIMEOUT
+        errorMessage =
+          "Location request timed out. Please check:\n" +
+          "1. Your internet connection\n" +
+          "2. That you're not in a building blocking GPS signals";
       }
       setLocationError(errorMessage);
       setIsRequestingLocation(false);
@@ -92,18 +131,28 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
       (error) => {
         let errorMessage = "Error tracking location.";
         if (error.code === 1) {
-          errorMessage = "Location access was denied. Please enable location access in your browser settings.";
+          errorMessage =
+            "Location access was denied. Please follow these steps:\n" +
+            "iOS: Settings > Privacy > Location Services > Safari\n" +
+            "Android: Settings > Privacy > Location > Chrome";
         } else if (error.code === 2) {
-          errorMessage = "Location information is unavailable.";
+          errorMessage =
+            "Unable to determine your location. Please check that:\n" +
+            "1. Your device's location is turned on\n" +
+            "2. You have a clear view of the sky\n" +
+            "3. You're not in airplane mode";
         } else if (error.code === 3) {
-          errorMessage = "Location request timed out.";
+          errorMessage =
+            "Location request timed out. Please check:\n" +
+            "1. Your internet connection\n" +
+            "2. That you're not in a building blocking GPS signals";
         }
         setLocationError(errorMessage);
         console.error("Location error:", error);
       },
       {
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 10000, // Increased timeout for slower mobile connections
         maximumAge: 0,
       }
     );
@@ -159,16 +208,28 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
     return R * c;
   };
 
-  const handleRatingSubmit = () => {
+  const handleRatingSubmit = (rating: BusynessLevel) => {
     if (currentLocation) {
       const newRating: RatingHistory = {
         locationId: currentLocation.id,
         locationName: currentLocation.name,
-        rating: busynessRating,
+        rating: rating,
         timestamp: new Date().toISOString(),
       };
       setRatingHistory([newRating, ...ratingHistory]);
+      onRatingSubmit?.(currentLocation.id, rating);
       setShowRatingModal(false);
+    }
+  };
+
+  const getBusynessColor = (rating: BusynessLevel) => {
+    switch (rating) {
+      case "not busy":
+        return "bg-green-500";
+      case "somewhat busy":
+        return "bg-yellow-500";
+      case "very busy":
+        return "bg-red-500";
     }
   };
 
@@ -226,10 +287,13 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
                       : "bg-blue-500 hover:bg-blue-600"
                   }`}
                 >
-                  {isRequestingLocation ? "Requesting Access..." : "Enable Location Access"}
+                  {isRequestingLocation
+                    ? "Requesting Access..."
+                    : "Enable Location Access"}
                 </button>
                 <p className="text-xs text-gray-500 mt-2">
-                  If no prompt appears, please check your browser settings by clicking the lock/info icon in the address bar.
+                  If no prompt appears, please check your browser settings by
+                  clicking the lock/info icon in the address bar.
                 </p>
               </div>
             ) : userLocation ? (
@@ -240,7 +304,9 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
             ) : (
               <div className="text-sm">
                 <p className="text-gray-600 mb-2">
-                  {isRequestingLocation ? "Requesting location access..." : "Getting your location..."}
+                  {isRequestingLocation
+                    ? "Requesting location access..."
+                    : "Getting your location..."}
                 </p>
                 <button
                   onClick={requestLocationPermission}
@@ -251,7 +317,9 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
                       : "bg-blue-500 hover:bg-blue-600"
                   }`}
                 >
-                  {isRequestingLocation ? "Requesting Access..." : "Request Location Access"}
+                  {isRequestingLocation
+                    ? "Requesting Access..."
+                    : "Request Location Access"}
                 </button>
               </div>
             )}
@@ -274,12 +342,13 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
                         {new Date(rating.timestamp).toLocaleString()}
                       </p>
                     </div>
-                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${rating.rating}%` }}
-                      ></div>
-                    </div>
+                    <span
+                      className={`px-2 py-1 rounded text-xs text-white ${getBusynessColor(
+                        rating.rating
+                      )}`}
+                    >
+                      {rating.rating}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -297,32 +366,39 @@ export default function UserProfile({ onLocationUpdate }: UserProfileProps) {
             <h3 className="text-xl font-bold mb-4">
               How busy is {currentLocation.name}?
             </h3>
-            <div className="mb-4">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={busynessRating}
-                onChange={(e) => setBusynessRating(Number(e.target.value))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-sm text-gray-600">
-                <span>Not Busy</span>
-                <span>Very Busy</span>
-              </div>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <button
+                onClick={() => handleRatingSubmit("not busy")}
+                className="p-4 border rounded-lg hover:bg-green-50 focus:ring-2 focus:ring-green-500 transition-colors"
+              >
+                <div className="text-green-500 font-semibold mb-2">
+                  Not Busy
+                </div>
+                <div className="text-sm text-gray-600">No wait time</div>
+              </button>
+              <button
+                onClick={() => handleRatingSubmit("somewhat busy")}
+                className="p-4 border rounded-lg hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-500 transition-colors"
+              >
+                <div className="text-yellow-500 font-semibold mb-2">
+                  Somewhat Busy
+                </div>
+                <div className="text-sm text-gray-600">Short wait</div>
+              </button>
+              <button
+                onClick={() => handleRatingSubmit("very busy")}
+                className="p-4 border rounded-lg hover:bg-red-50 focus:ring-2 focus:ring-red-500 transition-colors"
+              >
+                <div className="text-red-500 font-semibold mb-2">Very Busy</div>
+                <div className="text-sm text-gray-600">Long wait</div>
+              </button>
             </div>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end">
               <button
                 onClick={() => setShowRatingModal(false)}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
               >
                 Cancel
-              </button>
-              <button
-                onClick={handleRatingSubmit}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Submit
               </button>
             </div>
           </div>

@@ -1,3 +1,5 @@
+export type BusynessLevel = "not busy" | "somewhat busy" | "very busy";
+
 export interface DiningLocation {
   id: string;
   name: string;
@@ -10,9 +12,13 @@ export interface DiningLocation {
     [key: string]: string;
   };
   busyness?: {
-    current: number; // 0-100
+    level: BusynessLevel;
+    ratings: {
+      notBusy: number;
+      somewhatBusy: number;
+      veryBusy: number;
+    };
     lastUpdated: string;
-    totalRatings: number;
   };
   radius?: number; // in meters, for geofencing
 }
