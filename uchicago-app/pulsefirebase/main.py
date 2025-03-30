@@ -1,16 +1,16 @@
 from firebase_config import store_data
-def save_user_data():
-    user_data = {
-        "name": "John Doe",
-        "email": "john.doe@example.com",
+def add_location():
+    """
+    Add a location to the Firestore database.
+    """
+    # Example data to be added
+    data = {
+        "location": {
+            "latitude": 41.7886,
+            "longitude": -87.5987
+        },
+        "timestamp": "2023-10-01T12:00:00Z"
     }
-
-    try:
-        doc_id = user_data("users", user_data)
-        print(f"User data stored with document ID: {doc_id}")
-    except Exception as error:
-        print(f"Failed to store user data: {error}")
-
-if __name__ == "__main__":
-    save_user_data()
-
+    
+    # Store the data in the Firestore database
+    store_data("locations", data)
