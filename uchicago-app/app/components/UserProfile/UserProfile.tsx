@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {
-  diningLocations,
+  diningLocations as initialDiningLocations,
   DiningLocation,
   BusynessLevel,
 } from "../../../types/dining";
@@ -36,6 +36,9 @@ export default function UserProfile({
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
   const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
+  const [diningLocations, setDiningLocations] = useState<DiningLocation[]>(
+    initialDiningLocations
+  );
 
   // Function to check if a location has been rated recently (within last 30 minutes)
   const hasRecentRating = (locationId: string) => {
@@ -200,7 +203,7 @@ export default function UserProfile({
       );
 
       // If user is within 50 meters of a location and hasn't rated it recently
-      if (distance <= 0.05 && !hasRecentRating(diningLocation.id)) {
+      if (distance <= 1 && !hasRecentRating(diningLocation.id)) {
         setCurrentLocation(diningLocation);
         setShowRatingModal(true);
       }
@@ -226,7 +229,7 @@ export default function UserProfile({
     return R * c;
   };
 
-  const handleRatingSubmit = (rating: BusynessLevel) => {
+  const handleRatingSubmit = async (rating: BusynessLevel) => {
     if (currentLocation) {
       const newRating: RatingHistory = {
         locationId: currentLocation.id,
@@ -236,6 +239,7 @@ export default function UserProfile({
       };
       setRatingHistory([newRating, ...ratingHistory]);
       onRatingSubmit?.(currentLocation.id, rating);
+
       setShowRatingModal(false);
     }
   };
@@ -259,6 +263,16 @@ export default function UserProfile({
       // Cleanup will be handled by startLocationTracking's return function
     };
   }, []); // Empty dependency array since we only want this to run once
+
+  useEffect(() => {
+    // Fetch dining locations from Firestore on component mount
+    const loadDiningLocations = async () => {
+      const locations = initialDiningLocations;
+      setDiningLocations(locations);
+    };
+
+    loadDiningLocations();
+  }, []);
 
   return (
     <div className="fixed right-4 top-18 z-50">
@@ -362,7 +376,7 @@ export default function UserProfile({
                     className="flex items-center justify-between"
                   >
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm text-blue-600 font-medium">
                         {rating.locationName}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -390,7 +404,7 @@ export default function UserProfile({
       {showRatingModal && currentLocation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">
+            <h3 className="text-xl font-bold text-gray-700 mb-4">
               How busy is {currentLocation.name}?
             </h3>
             <div className="grid grid-cols-3 gap-4 mb-6">

@@ -1,4 +1,5 @@
 from firebase_config import store_data
+
 def add_location():
     """
     Add a location to the Firestore database.

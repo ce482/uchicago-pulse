@@ -13,8 +13,13 @@ load_dotenv()
 key_path = os.getenv("FIREBASE_KEY_PATH", "pulsefirebase/uchicagopulsedata-firebase-key.json")
 
 # Load the key file dynamically
-with open(key_path) as json_file:
-    key_data = json.load(json_file)
+try:
+    with open(key_path) as json_file:
+        key_data = json.load(json_file)
+except FileNotFoundError:
+    raise FileNotFoundError(
+        f"Firebase key file not found at {key_path}. Please ensure the file exists and the path is correct."
+    )
 
 # Initialize Firebase app with the loaded key data
 cred = credentials.Certificate(key_data)

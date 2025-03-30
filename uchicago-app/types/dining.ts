@@ -21,7 +21,7 @@ export interface DiningLocation {
   radius?: number; // in meters, for geofencing
 }
 
-export const diningLocations: DiningLocation[] = [
+export let diningLocations: DiningLocation[] = [
   // Dining Commons
   {
     id: "baker",
