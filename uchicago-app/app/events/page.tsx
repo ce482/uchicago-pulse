@@ -32,6 +32,33 @@ const mockEvents: Event[] = [
     description: "Weekly study group for CS majors",
   },
   // Add more mock events as needed
+  {
+    id: "3",
+    title: "Phi Delt Swim Social",
+    date: "2024-04-06",
+    time: "9:00 PM",
+    location: "Phi Delt Hours",
+    type: "social",
+    description: "Lit night with fun times",
+  },
+  {
+    id: "4",
+    title: "TASA Guest Speaker",
+    date: "2024-04-08",
+    time: "7:00 PM",
+    location: "Reynolds Club",
+    type: "academic",
+    description: "Enjoy a talk from a guest speaker",
+  },
+  {
+    id: "5",
+    title: "KTP Rush Event",
+    date: "2024-04-11",
+    time: "10:00 AM",
+    location: "Stuart 120",
+    type: "social",
+    description: "KTP Rush Information Session",
+  },
 ];
 
 export default function EventsPage() {

@@ -46,7 +46,7 @@ export default function RootLayout({
                   href="/communities"
                   className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
                 >
-                  Communities
+                   
                 </Link>
               </div>
             </div>
