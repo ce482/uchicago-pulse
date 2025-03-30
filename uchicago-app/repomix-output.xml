@@ -1,0 +1,2752 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+app/
+  communities/
+    page.tsx
+  components/
+    Map/
+      DiningMap.tsx
+    UserProfile/
+      UserProfile.tsx
+  events/
+    instagramEventAgent.js
+    page.tsx
+  hooks/
+    usePlatform.ts
+  map/
+    page.tsx
+  styles/
+    platform.ts
+  globals.css
+  layout.tsx
+  page.tsx
+ios/
+  App/
+    App/
+      Assets.xcassets/
+        AppIcon.appiconset/
+          Contents.json
+        Splash.imageset/
+          Contents.json
+        Contents.json
+      Base.lproj/
+        LaunchScreen.storyboard
+        Main.storyboard
+      AppDelegate.swift
+      Info.plist
+    App.xcodeproj/
+      xcuserdata/
+        chloeeng.xcuserdatad/
+          xcschemes/
+            xcschememanagement.plist
+      project.pbxproj
+    App.xcworkspace/
+      xcshareddata/
+        IDEWorkspaceChecks.plist
+      contents.xcworkspacedata
+    Podfile
+    Podfile.lock
+  .gitignore
+public/
+  file.svg
+  globe.svg
+  window.svg
+pulsefirebase/
+  .firebaserc
+  firebase.json
+  firebaseConfig.js
+  firestore.indexes.json
+  firestore.rules
+types/
+  dining.ts
+.gitignore
+capacitor.config.ts
+eslint.config.mjs
+next.config.js
+package.json
+postcss.config.mjs
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="app/communities/page.tsx">
+"use client";
+
+import { useState } from "react";
+
+interface Community {
+  id: string;
+  name: string;
+  type: "class" | "club" | "interest";
+  members: number;
+  description: string;
+  lastActive: string;
+}
+
+const mockCommunities: Community[] = [
+  {
+    id: "1",
+    name: "CS 151 - Introduction to Computer Science",
+    type: "class",
+    members: 120,
+    description: "Discussion group for CS 151 students",
+    lastActive: "2 minutes ago",
+  },
+  {
+    id: "2",
+    name: "UChicago Chess Club",
+    type: "club",
+    members: 45,
+    description: "Join us for weekly chess matches and tournaments",
+    lastActive: "1 hour ago",
+  },
+  {
+    id: "3",
+    name: "Photography Enthusiasts",
+    type: "interest",
+    members: 78,
+    description: "Share your photos and learn from others",
+    lastActive: "3 hours ago",
+  },
+];
+
+export default function CommunitiesPage() {
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCommunities = mockCommunities.filter((community) => {
+    const matchesType =
+      selectedType === "all" || community.type === selectedType;
+    const matchesSearch =
+      community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      community.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto bg-gray-50 min-h-screen p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">
+        Communities
+      </h1>
+
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search communities..."
+          className="w-full p-2 border rounded-lg mb-4 text-gray-800 bg-white"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setSelectedType("all")}
+            className={`px-4 py-2 rounded-full ${
+              selectedType === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setSelectedType("class")}
+            className={`px-4 py-2 rounded-full ${
+              selectedType === "class"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Classes
+          </button>
+          <button
+            onClick={() => setSelectedType("club")}
+            className={`px-4 py-2 rounded-full ${
+              selectedType === "club"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Clubs
+          </button>
+          <button
+            onClick={() => setSelectedType("interest")}
+            className={`px-4 py-2 rounded-full ${
+              selectedType === "interest"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Interest Groups
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {filteredCommunities.map((community) => (
+          <div
+            key={community.id}
+            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {community.name}
+                </h2>
+                <p className="text-gray-600 mt-1">{community.description}</p>
+              </div>
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  community.type === "class"
+                    ? "bg-blue-100 text-blue-800"
+                    : community.type === "club"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-purple-100 text-purple-800"
+                }`}
+              >
+                {community.type.charAt(0).toUpperCase() +
+                  community.type.slice(1)}
+              </span>
+            </div>
+            <div className="mt-4 text-sm text-gray-500 flex justify-between">
+              <p>👥 {community.members} members</p>
+              <p>🕒 Last active {community.lastActive}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="app/components/Map/DiningMap.tsx">
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
+import { Libraries } from "@googlemaps/js-api-loader";
+import {
+  diningLocations,
+  DiningLocation,
+  BusynessLevel,
+} from "../../../types/dining";
+import { usePlatform } from "../../hooks/usePlatform";
+import { getPlatformStyles } from "../../styles/platform";
+
+const containerStyle = {
+  width: "100%",
+  height: "100%",
+};
+
+const center = {
+  lat: 41.7897,
+  lng: -87.5997,
+};
+
+const libraries: Libraries = ["places"];
+
+export default function DiningMap() {
+  const { platform, isMobile } = usePlatform();
+  const platformStyles = getPlatformStyles(platform);
+
+  const handleError = (error: Error) => {
+    console.error("Error loading map:", error);
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  const [selectedLocation, setSelectedLocation] =
+    useState<DiningLocation | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredLocations, setFilteredLocations] = useState(diningLocations);
+
+  useEffect(() => {
+    const filtered = diningLocations.filter(
+      (location) =>
+        location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        location.type.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredLocations(filtered);
+  }, [searchQuery]);
+
+  const onLoad = (map: google.maps.Map) => {
+    // Remove unused map variable if not needed
+  };
+
+  const onUnmount = () => {
+    // Remove unused map variable if not needed
+  };
+
+  const getBusynessLevel = (location: DiningLocation): BusynessLevel | null => {
+    if (!location.busyness) return null;
+
+    const { notBusyCount, somewhatBusyCount, veryBusyCount } =
+      location.busyness;
+    const total = notBusyCount + somewhatBusyCount + veryBusyCount;
+
+    if (total === 0) return null;
+
+    // Find the highest count
+    const max = Math.max(notBusyCount, somewhatBusyCount, veryBusyCount);
+
+    if (max === notBusyCount) return "not busy";
+    if (max === somewhatBusyCount) return "somewhat busy";
+    return "very busy";
+  };
+
+  const getBusynessColor = (level: BusynessLevel | null) => {
+    switch (level) {
+      case "not busy":
+        return "text-green-600";
+      case "somewhat busy":
+        return "text-yellow-600";
+      case "very busy":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
+    }
+  };
+
+  const formatBusynessStats = (location: DiningLocation): string => {
+    if (!location.busyness) return "No ratings yet";
+
+    const { notBusyCount, somewhatBusyCount, veryBusyCount } =
+      location.busyness;
+    const total = notBusyCount + somewhatBusyCount + veryBusyCount;
+
+    return `${total} rating${total !== 1 ? "s" : ""}`;
+  };
+
+  return (
+    <div className="flex flex-col items-center w-full">
+      {/* Search Bar */}
+      <div
+        className={`w-full px-${isMobile ? "2" : "4"} mb-${
+          isMobile ? "2" : "4"
+        }`}
+      >
+        <input
+          type="text"
+          placeholder="Search for dining locations..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={`w-full border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black
+            ${isMobile ? "p-2 text-sm" : "p-3 text-base"}`}
+          style={platformStyles.input}
+        />
+        <div
+          className={`mt-${isMobile ? "1" : "2"} text-${
+            isMobile ? "xs" : "sm"
+          } text-gray-600`}
+        >
+          Found {filteredLocations.length} location
+          {filteredLocations.length !== 1 ? "s" : ""}
+        </div>
+      </div>
+
+      <div style={{ ...platformStyles.map, width: "100%" }}>
+        {isLoaded ? (
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={15}
+            onLoad={onLoad}
+            onUnmount={onUnmount}
+          >
+            {filteredLocations.map((location) => (
+              <Marker
+                key={location.id}
+                position={location.coordinates}
+                onClick={() => setSelectedLocation(location)}
+              />
+            ))}
+
+            {selectedLocation && (
+              <InfoWindow
+                position={selectedLocation.coordinates}
+                onCloseClick={() => setSelectedLocation(null)}
+                options={{
+                  pixelOffset: new google.maps.Size(0, -30),
+                  maxWidth: isMobile ? 300 : 320,
+                  minWidth: isMobile ? 280 : 300,
+                }}
+              >
+                <div
+                  className="bg-white w-full overflow-y-auto"
+                  style={{
+                    ...platformStyles.modal,
+                    maxHeight: isMobile ? "60vh" : "70vh",
+                  }}
+                >
+                  <h2
+                    className={`font-bold text-black mb-2 ${
+                      isMobile ? "text-lg" : "text-xl"
+                    }`}
+                  >
+                    {selectedLocation.name}
+                  </h2>
+
+                  {/* Busyness Status */}
+                  <div className="mb-3">
+                    <h3
+                      className={`font-semibold text-black mb-1 ${
+                        isMobile ? "text-sm" : "text-base"
+                      }`}
+                    >
+                      Current Status:
+                    </h3>
+                    <div className="flex flex-col space-y-1">
+                      <span
+                        className={`${
+                          isMobile ? "text-sm" : "text-base"
+                        } font-medium ${getBusynessColor(
+                          getBusynessLevel(selectedLocation)
+                        )}`}
+                      >
+                        {getBusynessLevel(selectedLocation) || "No data"}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {formatBusynessStats(selectedLocation)}
+                      </span>
+                      {selectedLocation.busyness?.lastUpdated && (
+                        <p className="text-xs text-gray-500">
+                          Last updated:{" "}
+                          {new Date(
+                            selectedLocation.busyness.lastUpdated
+                          ).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Hours */}
+                  <div>
+                    <h3
+                      className={`font-semibold text-black mb-1 ${
+                        isMobile ? "text-sm" : "text-base"
+                      }`}
+                    >
+                      Hours:
+                    </h3>
+                    <div className="space-y-1">
+                      {Object.entries(selectedLocation.hours).map(
+                        ([day, hours]) => (
+                          <p
+                            key={day}
+                            className="text-xs sm:text-sm text-gray-700"
+                          >
+                            <span className="font-medium">{day}:</span> {hours}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-black">Loading map...</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="app/components/UserProfile/UserProfile.tsx">
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  diningLocations,
+  DiningLocation,
+  BusynessLevel,
+} from "../../../types/dining";
+
+interface UserProfileProps {
+  onLocationUpdate?: (location: { lat: number; lng: number }) => void;
+  onRatingSubmit?: (locationId: string, rating: BusynessLevel) => void;
+}
+
+interface RatingHistory {
+  locationId: string;
+  locationName: string;
+  rating: BusynessLevel;
+  timestamp: string;
+}
+
+export default function UserProfile({
+  onLocationUpdate,
+  onRatingSubmit,
+}: UserProfileProps) {
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState<DiningLocation | null>(
+    null
+  );
+  const [showProfile, setShowProfile] = useState(false);
+  const [ratingHistory, setRatingHistory] = useState<RatingHistory[]>([]);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+  const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
+
+  // Function to check if a location has been rated recently (within last 30 minutes)
+  const hasRecentRating = (locationId: string) => {
+    const recentRating = ratingHistory.find(
+      (rating) =>
+        rating.locationId === locationId &&
+        new Date().getTime() - new Date(rating.timestamp).getTime() <
+          30 * 60 * 1000 // 30 minutes
+    );
+    return !!recentRating;
+  };
+
+  const handleLocationError = (
+    error: GeolocationPositionError | Error | unknown
+  ) => {
+    let errorMessage = "Error getting location.";
+
+    if (error instanceof GeolocationPositionError) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage =
+            "Location access was denied. Please enable location access in your browser settings and reload the page.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage =
+            "Unable to determine your location. Please check your device's location settings.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please try again.";
+          break;
+        default:
+          errorMessage = "An error occurred while getting your location.";
+      }
+    } else if (error instanceof Error) {
+      errorMessage =
+        error.message || "An unexpected error occurred with location services.";
+    } else if (error && typeof error === "object" && "message" in error) {
+      errorMessage = String(error.message);
+    }
+
+    setLocationError(errorMessage);
+    setIsRequestingLocation(false);
+    console.error("Location error:", { error, message: errorMessage });
+  };
+
+  const requestLocationPermission = async () => {
+    if (hasRequestedPermission) return;
+
+    setIsRequestingLocation(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setIsRequestingLocation(false);
+      return;
+    }
+
+    try {
+      // First try to get permission status
+      try {
+        const permissionResult = await navigator.permissions.query({
+          name: "geolocation",
+        });
+        if (permissionResult.state === "denied") {
+          throw new Error(
+            "Location permission is denied. Please enable location access in your browser settings."
+          );
+        }
+      } catch (permError) {
+        // If we can't check permissions, continue to try getting location
+        console.warn("Could not check location permissions:", permError);
+      }
+
+      // Request the location
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          const timeoutId = setTimeout(() => {
+            reject(new Error("Location request timed out. Please try again."));
+          }, 10000);
+
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              clearTimeout(timeoutId);
+              resolve(pos);
+            },
+            (err) => {
+              clearTimeout(timeoutId);
+              reject(err);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            }
+          );
+        }
+      );
+
+      // If we get here, we have permission and a valid position
+      setHasRequestedPermission(true);
+      const location = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      setUserLocation(location);
+      onLocationUpdate?.(location);
+
+      // Start continuous tracking
+      startLocationTracking();
+      setIsRequestingLocation(false);
+    } catch (error) {
+      handleLocationError(error);
+    }
+  };
+
+  const startLocationTracking = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      return;
+    }
+
+    try {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(location);
+          setLocationError(null);
+          onLocationUpdate?.(location);
+          checkNearbyLocations(location);
+        },
+        (error) => handleLocationError(error),
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+
+      return () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      };
+    } catch (error) {
+      handleLocationError(
+        error instanceof Error
+          ? error
+          : new Error("Failed to start location tracking")
+      );
+      return () => {};
+    }
+  };
+
+  const checkNearbyLocations = (location: { lat: number; lng: number }) => {
+    diningLocations.forEach((diningLocation) => {
+      const distance = calculateDistance(
+        location.lat,
+        location.lng,
+        diningLocation.coordinates.lat,
+        diningLocation.coordinates.lng
+      );
+
+      // If user is within 50 meters of a location and hasn't rated it recently
+      if (distance <= 0.05 && !hasRecentRating(diningLocation.id)) {
+        setCurrentLocation(diningLocation);
+        setShowRatingModal(true);
+      }
+    });
+  };
+
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const handleRatingSubmit = (rating: BusynessLevel) => {
+    if (currentLocation) {
+      const newRating: RatingHistory = {
+        locationId: currentLocation.id,
+        locationName: currentLocation.name,
+        rating: rating,
+        timestamp: new Date().toISOString(),
+      };
+      setRatingHistory([newRating, ...ratingHistory]);
+      onRatingSubmit?.(currentLocation.id, rating);
+      setShowRatingModal(false);
+    }
+  };
+
+  const getBusynessColor = (rating: BusynessLevel) => {
+    switch (rating) {
+      case "not busy":
+        return "bg-green-500";
+      case "somewhat busy":
+        return "bg-yellow-500";
+      case "very busy":
+        return "bg-red-500";
+    }
+  };
+
+  useEffect(() => {
+    // Request location permission when component mounts
+    requestLocationPermission();
+
+    return () => {
+      // Cleanup will be handled by startLocationTracking's return function
+    };
+  }, []); // Empty dependency array since we only want this to run once
+
+  return (
+    <div className="fixed right-4 top-18 z-50">
+      {/* Profile Button */}
+      <button
+        onClick={() => setShowProfile(!showProfile)}
+        className="bg-red-900 rounded-lg shadow-xl p-3 hover:bg-red-950 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      </button>
+
+      {/* Profile Panel */}
+      {showProfile && (
+        <div className="absolute right-0 mt-4 w-80 bg-white rounded-lg shadow-xl p-4">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-blue-600 text-xl font-semibold">
+                {userLocation ? "U" : "?"}
+              </span>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg text-black">
+                UChicago Student
+              </h3>
+              <p className="text-sm text-gray-600">Active Now</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-4">
+            <h4 className="font-semibold mb-2 text-black">Your Location</h4>
+            {locationError ? (
+              <div className="text-sm">
+                <p className="text-red-600 mb-2">{locationError}</p>
+                <button
+                  onClick={requestLocationPermission}
+                  disabled={isRequestingLocation}
+                  className={`w-full px-4 py-2 rounded text-white transition-colors ${
+                    isRequestingLocation
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                >
+                  {isRequestingLocation
+                    ? "Requesting Access..."
+                    : "Enable Location Access"}
+                </button>
+                <p className="text-xs text-gray-500 mt-2">
+                  If no prompt appears, please check your browser settings by
+                  clicking the lock/info icon in the address bar.
+                </p>
+              </div>
+            ) : userLocation ? (
+              <div className="text-sm text-gray-600">
+                <p>Latitude: {userLocation.lat.toFixed(6)}</p>
+                <p>Longitude: {userLocation.lng.toFixed(6)}</p>
+              </div>
+            ) : (
+              <div className="text-sm">
+                <p className="text-gray-600 mb-2">
+                  {isRequestingLocation
+                    ? "Requesting location access..."
+                    : "Getting your location..."}
+                </p>
+                <button
+                  onClick={requestLocationPermission}
+                  disabled={isRequestingLocation}
+                  className={`w-full px-4 py-2 rounded text-white transition-colors ${
+                    isRequestingLocation
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                >
+                  {isRequestingLocation
+                    ? "Requesting Access..."
+                    : "Request Location Access"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <h4 className="font-semibold mb-2 text-black">Recent Ratings</h4>
+            {ratingHistory.length > 0 ? (
+              <div className="space-y-3">
+                {ratingHistory.map((rating, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">
+                        {rating.locationName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(rating.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2 py-1 rounded text-xs text-white ${getBusynessColor(
+                        rating.rating
+                      )}`}
+                    >
+                      {rating.rating}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-600">No ratings yet</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && currentLocation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">
+              How busy is {currentLocation.name}?
+            </h3>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <button
+                onClick={() => handleRatingSubmit("not busy")}
+                className="p-4 border rounded-lg hover:bg-green-50 focus:ring-2 focus:ring-green-500 transition-colors"
+              >
+                <div className="text-green-500 font-semibold mb-2">
+                  Not Busy
+                </div>
+                <div className="text-sm text-gray-600">No wait time</div>
+              </button>
+              <button
+                onClick={() => handleRatingSubmit("somewhat busy")}
+                className="p-4 border rounded-lg hover:bg-yellow-50 focus:ring-2 focus:ring-yellow-500 transition-colors"
+              >
+                <div className="text-yellow-500 font-semibold mb-2">
+                  Somewhat Busy
+                </div>
+                <div className="text-sm text-gray-600">Short wait</div>
+              </button>
+              <button
+                onClick={() => handleRatingSubmit("very busy")}
+                className="p-4 border rounded-lg hover:bg-red-50 focus:ring-2 focus:ring-red-500 transition-colors"
+              >
+                <div className="text-red-500 font-semibold mb-2">Very Busy</div>
+                <div className="text-sm text-gray-600">Long wait</div>
+              </button>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowRatingModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+</file>
+
+<file path="app/events/instagramEventAgent.js">
+import { OpenAI } from "langchain/llms/openai";
+import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";
+import axios from "axios";
+
+// Instagram API configuration
+const INSTAGRAM_API_BASE = "https://graph.facebook.com/v16.0";
+const ACCESS_TOKEN = "YOUR_ACCESS_TOKEN"; // Replace with your access token
+const CLUB_INSTAGRAM_IDS = [
+  "club1_instagram_id", // Replace with actual Instagram user IDs
+  "club2_instagram_id",
+  // Add more club Instagram IDs
+];
+
+// Initialize Llama 3.1 (Nemotron) via LangChain
+const llm = new OpenAI({
+  model: "text-davinci-003", // Replace with Llama 3.1 if supported
+  temperature: 0.7,
+  maxTokens: 500,
+});
+
+// Define a prompt template for extracting event details
+const promptTemplate = new PromptTemplate({
+  inputVariables: ["caption"],
+  template: `
+    Analyze the following Instagram caption and extract event details:
+    Caption: {caption}
+    Output format:
+    - Title:
+    - Date:
+    - Time:
+    - Location:
+    - Description:
+  `,
+});
+
+// Fetch recent posts from a club's Instagram account
+async function fetchInstagramPosts(instagramId) {
+  const url = `${INSTAGRAM_API_BASE}/${instagramId}/media?fields=id,caption,media_type,media_url,timestamp&access_token=${ACCESS_TOKEN}`;
+  try {
+    const response = await axios.get(url);
+    return response.data.data; // Array of posts
+  } catch (error) {
+    console.error(`Error fetching posts for Instagram ID ${instagramId}:`, error.message);
+    return [];
+  }
+}
+
+// Process posts using LangChain and Llama 3.1
+async function processPosts(posts) {
+  const chain = new LLMChain({ llm, prompt: promptTemplate });
+  const events = [];
+
+  for (const post of posts) {
+    if (post.caption) {
+      try {
+        const result = await chain.call({ caption: post.caption });
+        const event = parseEventOutput(result.text);
+        if (event) {
+          events.push(event);
+        }
+      } catch (error) {
+        console.error("Error processing post:", error.message);
+      }
+    }
+  }
+
+  return events;
+}
+
+// Parse the output from the LLM into a structured event object
+function parseEventOutput(output) {
+  const lines = output.split("\n").map((line) => line.trim());
+  const event = {};
+
+  lines.forEach((line) => {
+    if (line.startsWith("- Title:")) event.title = line.replace("- Title:", "").trim();
+    if (line.startsWith("- Date:")) event.date = line.replace("- Date:", "").trim();
+    if (line.startsWith("- Time:")) event.time = line.replace("- Time:", "").trim();
+    if (line.startsWith("- Location:")) event.location = line.replace("- Location:", "").trim();
+    if (line.startsWith("- Description:")) event.description = line.replace("- Description:", "").trim();
+  });
+
+  return event.title ? event : null; // Return only if a title is found
+}
+
+// Main function to scrape Instagram and create events
+async function scrapeInstagramForEvents() {
+  const allEvents = [];
+  for (const instagramId of CLUB_INSTAGRAM_IDS) {
+    const posts = await fetchInstagramPosts(instagramId);
+    const events = await processPosts(posts);
+    allEvents.push(...events);
+  }
+  console.log("Scraped Events:", allEvents);
+  // TODO: Add logic to save events to your database or trigger event creation
+}
+
+// Run the agent
+scrapeInstagramForEvents();
+</file>
+
+<file path="app/events/page.tsx">
+"use client";
+
+import { useState } from "react";
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  type: "frat" | "academic" | "social";
+  description: string;
+}
+
+const mockEvents: Event[] = [
+  {
+    id: "1",
+    title: "Alpha Delta Phi Social",
+    date: "2024-03-30",
+    time: "9:00 PM",
+    location: "Alpha Delta Phi House",
+    type: "social",
+    description: "Join us for a night of fun and socializing!",
+  },
+  {
+    id: "2",
+    title: "Computer Science Study Group",
+    date: "2024-03-31",
+    time: "2:00 PM",
+    location: "Regenstein Library",
+    type: "academic",
+    description: "Weekly study group for CS majors",
+  },
+  // Add more mock events as needed
+];
+
+export default function EventsPage() {
+  const [selectedType, setSelectedType] = useState<string>("all");
+
+  const filteredEvents =
+    selectedType === "all"
+      ? mockEvents
+      : mockEvents.filter((event) => event.type === selectedType);
+
+  return (
+    <div className="max-w-4xl mx-auto bg-gray-50 min-h-screen p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">
+        Campus Events
+      </h1>
+
+      <div className="mb-6">
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setSelectedType("all")}
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
+              selectedType === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            All Events
+          </button>
+          <button
+            onClick={() => setSelectedType("academic")}
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
+              selectedType === "academic"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Academic
+          </button>
+          <button
+            onClick={() => setSelectedType("social")}
+            className={`px-4 py-2 rounded-full text-sm sm:text-base ${
+              selectedType === "social"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Social
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {filteredEvents.map((event) => (
+          <div
+            key={event.id}
+            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {event.title}
+                </h2>
+                <p className="text-gray-600 mt-1">{event.description}</p>
+              </div>
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  event.type === "academic"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
+                {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+              </span>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              <p>📅 {event.date}</p>
+              <p>🕒 {event.time}</p>
+              <p>📍 {event.location}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="app/hooks/usePlatform.ts">
+import { useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
+
+export type Platform = "ios" | "android" | "web";
+
+export function usePlatform() {
+  const [platform, setPlatform] = useState<Platform>("web");
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      if (Capacitor.getPlatform() === "ios") {
+        setPlatform("ios");
+      } else if (Capacitor.getPlatform() === "android") {
+        setPlatform("android");
+      }
+    }
+  }, []);
+
+  const isMobile = platform === "ios" || platform === "android";
+  const isIOS = platform === "ios";
+  const isAndroid = platform === "android";
+  const isWeb = platform === "web";
+
+  return {
+    platform,
+    isMobile,
+    isIOS,
+    isAndroid,
+    isWeb,
+  };
+}
+</file>
+
+<file path="app/map/page.tsx">
+"use client";
+
+import DiningMap from "../components/Map/DiningMap";
+import UserProfile from "../components/UserProfile/UserProfile";
+
+export default function MapPage() {
+  return (
+    <div className="flex flex-col min-h-screen bg-white">
+      <h1 className="text-2xl sm:text-3xl font-bold my-4 sm:my-6 text-black px-4 sm:px-6">
+        UChicago Dining Map
+      </h1>
+      <DiningMap />
+      <UserProfile />
+    </div>
+  );
+}
+</file>
+
+<file path="app/styles/platform.ts">
+import { Platform } from "../hooks/usePlatform";
+
+export const getPlatformStyles = (platform: Platform) => ({
+  // Navigation styles
+  header: {
+    height:
+      platform === "ios" ? "44px" : platform === "android" ? "56px" : "64px",
+    paddingTop: platform === "ios" ? "20px" : "0",
+  },
+
+  // Content container styles
+  container: {
+    padding: platform !== "web" ? "16px" : "24px",
+    marginBottom: platform !== "web" ? "0" : "24px",
+  },
+
+  // Button styles
+  button: {
+    height: platform !== "web" ? "44px" : "40px",
+    borderRadius:
+      platform === "ios" ? "8px" : platform === "android" ? "4px" : "6px",
+  },
+
+  // Input styles
+  input: {
+    height: platform !== "web" ? "44px" : "40px",
+    borderRadius:
+      platform === "ios" ? "8px" : platform === "android" ? "4px" : "6px",
+    padding: platform !== "web" ? "12px 16px" : "8px 12px",
+  },
+
+  // Map styles
+  map: {
+    height: platform !== "web" ? "calc(100vh - 88px)" : "calc(100vh - 64px)",
+  },
+
+  // Modal styles
+  modal: {
+    borderRadius:
+      platform === "ios" ? "12px" : platform === "android" ? "4px" : "8px",
+    padding: platform !== "web" ? "20px" : "24px",
+  },
+
+  // List item styles
+  listItem: {
+    height: platform !== "web" ? "60px" : "48px",
+    padding: platform !== "web" ? "16px" : "12px",
+  },
+
+  // Font sizes
+  fontSize: {
+    small: platform !== "web" ? "14px" : "12px",
+    medium: platform !== "web" ? "16px" : "14px",
+    large: platform !== "web" ? "18px" : "16px",
+  },
+
+  // Touch targets
+  touchTarget: {
+    minHeight: platform !== "web" ? "44px" : "32px",
+    minWidth: platform !== "web" ? "44px" : "32px",
+  },
+});
+</file>
+
+<file path="app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+</file>
+
+<file path="app/layout.tsx">
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Link from "next/link";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "UChicago Pulse",
+  description: "Your one-stop destination for campus life",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
+        <nav className="bg-white dark:bg-gray-900 shadow-lg border-b-4 border-accent">
+          <div className="w-full max-w-7xl mx-auto px-2 sm:px-4">
+            <div className="flex justify-between items-center h-16 sm:h-20">
+              <div className="flex-shrink-0">
+                <Link
+                  href="/"
+                  className="text-lg sm:text-2xl font-bold text-primary truncate"
+                >
+                  UChicago Pulse
+                </Link>
+              </div>
+              <div className="flex items-center space-x-3 sm:space-x-8">
+                <Link
+                  href="/map"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                >
+                  Map
+                </Link>
+                <Link
+                  href="/events"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                >
+                  Events
+                </Link>
+                <Link
+                  href="/communities"
+                  className="text-sm sm:text-base text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-primary"
+                >
+                  Communities
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <main className="flex-grow w-full max-w-full overflow-x-hidden">
+          {children}
+        </main>
+        <footer className="bg-white dark:bg-gray-900 border-t-4 border-accent">
+          <div className="w-full max-w-7xl mx-auto py-4 sm:py-6 px-2 sm:px-6">
+            <p className="text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+              © {new Date().getFullYear()} UChicago Pulse
+            </p>
+          </div>
+        </footer>
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="app/page.tsx">
+"use client";
+
+import Link from "next/link";
+import { usePlatform } from "./hooks/usePlatform";
+
+export default function Home() {
+  const { isMobile } = usePlatform();
+
+  return (
+    <div className="flex flex-col items-center min-h-screen bg-white text-black px-2 py-4 sm:p-8">
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4 text-black text-center">
+        Welcome to UChicago Pulse
+      </h1>
+      <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-12 text-gray-600 text-center max-w-3xl">
+        Your central platform for campus life
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 w-full max-w-7xl">
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-lg">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-black">
+            Dining Hall Map
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600">
+            Check real-time occupancy at dining halls and cafes across campus
+          </p>
+          <Link
+            href="/map"
+            className="mt-3 inline-block text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+          >
+            View Map →
+          </Link>
+        </div>
+
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-lg">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-black">
+            Campus Events
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600">
+            Discover upcoming events, parties, and social gatherings
+          </p>
+          <Link
+            href="/events"
+            className="mt-3 inline-block text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+          >
+            View Events →
+          </Link>
+        </div>
+
+        <div className="bg-white p-3 sm:p-6 rounded-lg shadow-lg">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-black">
+            Communities
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600">
+            Connect with classmates and join study groups
+          </p>
+          <Link
+            href="/communities"
+            className="mt-3 inline-block text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+          >
+            Join Communities →
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json">
+{
+  "images" : [
+    {
+      "filename" : "AppIcon-512@2x.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+</file>
+
+<file path="ios/App/App/Assets.xcassets/Splash.imageset/Contents.json">
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732-2.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732-1.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732.png",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}
+</file>
+
+<file path="ios/App/App/Assets.xcassets/Contents.json">
+{
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}
+</file>
+
+<file path="ios/App/App/Base.lproj/LaunchScreen.storyboard">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17105"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash" id="snD-IY-ifK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </imageView>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Splash" width="1366" height="1366"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
+</file>
+
+<file path="ios/App/App/Base.lproj/Main.storyboard">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14111" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+    </dependencies>
+    <scenes>
+        <!--Bridge View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="CAPBridgeViewController" customModule="Capacitor" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
+</file>
+
+<file path="ios/App/App/AppDelegate.swift">
+import UIKit
+import Capacitor
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        return true
+    }
+
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        // Called when the app was launched with a url. Feel free to add additional processing here,
+        // but if you want the App API to support tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Called when the app was launched with an activity, including Universal Links.
+        // Feel free to add additional processing here, but if you want the App API to support
+        // tracking app url opens, make sure to keep this call
+        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    }
+
+}
+</file>
+
+<file path="ios/App/App/Info.plist">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+        <string>UChicago Dining</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+</dict>
+</plist>
+</file>
+
+<file path="ios/App/App.xcodeproj/xcuserdata/chloeeng.xcuserdatad/xcschemes/xcschememanagement.plist">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+	</dict>
+</dict>
+</plist>
+</file>
+
+<file path="ios/App/App.xcodeproj/project.pbxproj">
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
+		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
+		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
+		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
+		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
+		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
+		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		504EC3011FED79650016851F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		27E2DDA53C4D2A4D1A88CE4A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		504EC2FB1FED79650016851F = {
+			isa = PBXGroup;
+			children = (
+				504EC3061FED79650016851F /* App */,
+				504EC3051FED79650016851F /* Products */,
+				7F8756D8B27F46E3366F6CEA /* Pods */,
+				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		504EC3051FED79650016851F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				504EC3041FED79650016851F /* App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		504EC3061FED79650016851F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				50379B222058CBB4000EE86E /* capacitor.config.json */,
+				504EC3071FED79650016851F /* AppDelegate.swift */,
+				504EC30B1FED79650016851F /* Main.storyboard */,
+				504EC30E1FED79650016851F /* Assets.xcassets */,
+				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
+				504EC3131FED79650016851F /* Info.plist */,
+				2FAD9762203C412B000D30F8 /* config.xml */,
+				50B271D01FEDC1A000F3C39B /* public */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		7F8756D8B27F46E3366F6CEA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */,
+				AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		504EC3031FED79650016851F /* App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
+			buildPhases = (
+				6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */,
+				504EC3001FED79650016851F /* Sources */,
+				504EC3011FED79650016851F /* Frameworks */,
+				504EC3021FED79650016851F /* Resources */,
+				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = App;
+			productName = App;
+			productReference = 504EC3041FED79650016851F /* App.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		504EC2FC1FED79650016851F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					504EC3031FED79650016851F = {
+						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 504EC2FB1FED79650016851F;
+			packageReferences = (
+			);
+			productRefGroup = 504EC3051FED79650016851F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				504EC3031FED79650016851F /* App */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		504EC3021FED79650016851F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
+				50B271D11FEDC1A000F3C39B /* public in Resources */,
+				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
+				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
+				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
+				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-App-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		504EC3001FED79650016851F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		504EC30B1FED79650016851F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				504EC30C1FED79650016851F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		504EC3101FED79650016851F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				504EC3111FED79650016851F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		504EC3141FED79650016851F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		504EC3151FED79650016851F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		504EC3171FED79650016851F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W6YSX827RJ;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uchicago.dining;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		504EC3181FED79650016851F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W6YSX827RJ;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.uchicago.dining;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				504EC3141FED79650016851F /* Debug */,
+				504EC3151FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				504EC3171FED79650016851F /* Debug */,
+				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 504EC2FC1FED79650016851F /* Project object */;
+}
+</file>
+
+<file path="ios/App/App.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDEDidComputeMac32BitWarning</key>
+	<true/>
+</dict>
+</plist>
+</file>
+
+<file path="ios/App/App.xcworkspace/contents.xcworkspacedata">
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:App.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+</Workspace>
+</file>
+
+<file path="ios/App/Podfile">
+require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
+
+platform :ios, '14.0'
+use_frameworks!
+
+# workaround to avoid Xcode caching of Pods that requires
+# Product -> Clean Build Folder after new Cordova plugins installed
+# Requires CocoaPods 1.6 or newer
+install! 'cocoapods', :disable_input_output_paths => true
+
+def capacitor_pods
+  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorGeolocation', :path => '../../node_modules/@capacitor/geolocation'
+end
+
+target 'App' do
+  capacitor_pods
+  # Add your Pods here
+end
+
+post_install do |installer|
+  assertDeploymentTarget(installer)
+end
+</file>
+
+<file path="ios/App/Podfile.lock">
+PODS:
+  - Capacitor (7.1.0):
+    - CapacitorCordova
+  - CapacitorCordova (7.1.0)
+  - CapacitorGeolocation (7.1.1):
+    - Capacitor
+    - IONGeolocationLib (~> 1.0)
+  - IONGeolocationLib (1.0.0)
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
+
+SPEC REPOS:
+  trunk:
+    - IONGeolocationLib
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorGeolocation:
+    :path: "../../node_modules/@capacitor/geolocation"
+
+SPEC CHECKSUMS:
+  Capacitor: bceb785fb78f5e81e4a9e37843bc1c24bd9c7194
+  CapacitorCordova: 866217f32c1d25b326c568a10ea3ed0c36b13e29
+  CapacitorGeolocation: c0755715aaadf5c86dc0053e1127b368444c914b
+  IONGeolocationLib: 81f33f88d025846946de2cf63b0c7628e7c6bc9d
+
+PODFILE CHECKSUM: d0cae255d77e99ffdc1db034d18c3075298e38da
+
+COCOAPODS: 1.16.2
+</file>
+
+<file path="ios/.gitignore">
+App/build
+App/Pods
+App/output
+App/App/public
+DerivedData
+xcuserdata
+
+# Cordova plugins for Capacitor
+capacitor-cordova-ios-plugins
+
+# Generated Config files
+App/App/capacitor.config.json
+App/App/config.xml
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="pulsefirebase/.firebaserc">
+{
+  "projects": {
+    "default": "uchicagopulsedata"
+  }
+}
+</file>
+
+<file path="pulsefirebase/firebase.json">
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
+</file>
+
+<file path="pulsefirebase/firebaseConfig.js">
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
+
+export { app, analytics };
+</file>
+
+<file path="pulsefirebase/firestore.indexes.json">
+{
+  "indexes": [],
+  "fieldOverrides": []
+}
+</file>
+
+<file path="pulsefirebase/firestore.rules">
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+</file>
+
+<file path="types/dining.ts">
+export type DiningLocationType = "dining" | "cafe";
+export type BusynessLevel = "not busy" | "somewhat busy" | "very busy";
+
+export interface DiningLocation {
+  id: string;
+  name: string;
+  type: DiningLocationType;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  hours: {
+    [key: string]: string;
+  };
+  busyness?: {
+    notBusyCount: number;
+    somewhatBusyCount: number;
+    veryBusyCount: number;
+    lastUpdated: string;
+  };
+  radius?: number; // in meters, for geofencing
+}
+
+export const diningLocations: DiningLocation[] = [
+  // Dining Commons
+  {
+    id: "baker",
+    name: "Baker Dining Commons",
+    type: "dining",
+    coordinates: { lat: 41.79484571708271, lng: -87.59908567675234 },
+    hours: {
+      "Monday-Friday": "7:00 AM – 8:30 PM",
+      Saturday: "8:00 AM – 2:30 PM",
+      Sunday: "8:00 AM – 8:30 PM",
+    },
+  },
+  {
+    id: "cathey",
+    name: "Cathey Dining Commons",
+    type: "dining",
+    coordinates: { lat: 41.785463993599784, lng: -87.60010858996223 },
+    hours: {
+      "Monday-Friday": "7:00 AM – 8:30 PM",
+      Saturday: "8:00 AM – 2:30 PM",
+      Sunday: "8:00 AM – 8:30 PM",
+    },
+  },
+  {
+    id: "bartlett",
+    name: "Bartlett Dining Commons",
+    type: "dining",
+    coordinates: { lat: 41.792131851073485, lng: -87.59824251722922 },
+    hours: {
+      "Monday-Friday": "7:00 AM – 8:30 PM",
+      Saturday: "8:00 AM – 8:30 PM",
+      Sunday: "8:00 AM – 8:30 PM",
+    },
+  },
+  {
+    id: "woodlawn",
+    name: "Woodlawn Dining Commons",
+    type: "dining",
+    coordinates: { lat: 41.78491217087956, lng: -87.59721649209658 },
+    hours: {
+      "Monday-Friday": "7:00 AM – 8:30 PM",
+      Saturday: "8:00 AM – 8:30 PM",
+      Sunday: "8:00 AM – 8:30 PM",
+    },
+  },
+
+  // Cafes
+  {
+    id: "cafe-logan",
+    name: "Café Logan",
+    type: "cafe",
+    coordinates: { lat: 41.78588256797862, lng: -87.60343551545964 },
+    hours: {
+      "Monday-Friday": "8:00 AM – 8:00 PM",
+      Saturday: "12:00 PM – 6:00 PM",
+      Sunday: "12:00 PM – 4:00 PM",
+    },
+  },
+  {
+    id: "gordon",
+    name: "Gordon Café",
+    type: "cafe",
+    coordinates: { lat: 41.79137565967827, lng: -87.60244741730853 },
+    hours: {
+      "Monday-Friday": "8:00 AM – 3:00 PM",
+    },
+  },
+  {
+    id: "harris",
+    name: "Harris Café",
+    type: "cafe",
+    coordinates: { lat: 41.785904068830064, lng: -87.59432983265123 },
+    hours: {
+      "Monday-Thursday": "8:00 AM – 4:00 PM",
+      Friday: "8:00 AM – 2:30 PM",
+    },
+  },
+  {
+    id: "hutchinson",
+    name: "Hutchinson Commons",
+    type: "cafe",
+    coordinates: { lat: 41.79107774933602, lng: -87.59888110566445 },
+    hours: {
+      "Monday-Thursday": "11:00 AM – 8:00 PM",
+      Friday: "11:00 AM – 3:00 PM",
+      Saturday: "11:00 AM – 4:00 PM",
+    },
+  },
+  {
+    id: "peaches",
+    name: "Peaches",
+    type: "cafe",
+    coordinates: { lat: 41.791065292061596, lng: -87.60267307937721 },
+    hours: {
+      Monday: "8:00 AM - 4:00 PM",
+      Tuesday: "8:00 AM - 4:00 PM",
+      Wednesday: "8:00 AM - 4:00 PM",
+      Thursday: "8:00 AM - 4:00 PM",
+      Friday: "8:00 AM - 4:00 PM",
+      Saturday: "Closed",
+      Sunday: "Closed",
+    },
+  },
+  {
+    id: "quantum",
+    name: "Quantum Café",
+    type: "cafe",
+    coordinates: { lat: 41.791781572703, lng: -87.60163866543611 },
+    hours: {
+      "Monday-Friday": "8:00 AM – 3:00 PM",
+    },
+  },
+  {
+    id: "pret",
+    name: "Pret A Manger",
+    type: "cafe",
+    coordinates: { lat: 41.79112949595983, lng: -87.59822996457885 },
+    hours: {
+      "Monday-Friday": "8:00 AM – 11:00 PM",
+      "Saturday-Sunday": "9:00 AM – 11:00 PM",
+    },
+  },
+  {
+    id: "starbucks",
+    name: "Starbucks @ Saieh",
+    type: "cafe",
+    coordinates: { lat: 41.78999971328162, lng: -87.59718146853191 },
+    hours: {
+      "Monday-Friday": "7:00 AM – 6:00 PM",
+    },
+  },
+  {
+    id: "french-press",
+    name: "Chicago French Press",
+    type: "cafe",
+    coordinates: { lat: 41.79074098949526, lng: -87.60144919213627 },
+    hours: {
+      "Monday-Friday": "8:00 AM – 6:00 PM",
+      "Saturday-Sunday": "9:00 AM – 6:00 PM",
+    },
+  },
+  {
+    id: "cobb",
+    name: "Cobb Coffee Shop",
+    type: "cafe",
+    coordinates: { lat: 41.78895250603872, lng: -87.60086568929977 },
+    hours: {
+      "Monday-Friday": "9:00 AM – 4:00 PM",
+    },
+  },
+  {
+    id: "ex-libris",
+    name: "Ex-Libris Café",
+    type: "cafe",
+    coordinates: { lat: 41.79213644602098, lng: -87.59999002922112 },
+    hours: {
+      "Monday-Thursday": "9:00 AM – 10:30 PM",
+      Friday: "9:00 AM – 5:00 PM",
+      Saturday: "11:00 AM – 5:00 PM",
+      Sunday: "11:00 AM – 10:30 PM",
+    },
+  },
+  {
+    id: "harper",
+    name: "Harper Café",
+    type: "cafe",
+    coordinates: { lat: 41.787976077347636, lng: -87.59959761100839 },
+    hours: {
+      "Monday-Thursday": "9:00 AM – 6:00 PM",
+      Friday: "8:30 AM – 5:00 PM",
+      Saturday: "Closed",
+      Sunday: "12:00 PM – 5:00 PM",
+    },
+  },
+  {
+    id: "hallowed-grounds",
+    name: "Hallowed Grounds",
+    type: "cafe",
+    coordinates: { lat: 41.79130615162927, lng: -87.59832520314384 },
+    hours: {
+      "Monday-Tuesday": "9:00 AM – 6:00 PM",
+      "Wednesday-Thursday": "9:00 AM – 9:00 PM",
+      Friday: "9:00 AM – 8:00 PM",
+      Saturday: "12:00 PM – 5:30 PM",
+      Sunday: "12:00 PM – 9:00 PM",
+    },
+  },
+];
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="capacitor.config.ts">
+import { CapacitorConfig } from "@capacitor/cli";
+
+const config: CapacitorConfig = {
+  appId: "com.uchicagodining.app",
+  appName: "UChicago Dining",
+  webDir: "out",
+  server: {
+    androidScheme: "https",
+    iosScheme: "https",
+  },
+  plugins: {
+    Geolocation: {
+      ios: {
+        plist: {
+          NSLocationWhenInUseUsageDescription:
+            "We need your location to show nearby dining locations and collect busyness data.",
+          NSLocationAlwaysUsageDescription:
+            "We need your location to notify you about nearby dining locations and collect busyness data.",
+        },
+      },
+      android: {
+        manifest: {
+          permissions: [
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION",
+          ],
+        },
+      },
+    },
+  },
+};
+
+export default config;
+</file>
+
+<file path="eslint.config.mjs">
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  {
+    extends: [
+      "next/core-web-vitals",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+    ],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
+];
+
+export default eslintConfig;
+</file>
+
+<file path="next.config.js">
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export",
+  images: {
+    unoptimized: true,
+  },
+};
+
+module.exports = nextConfig;
+</file>
+
+<file path="package.json">
+{
+  "name": "uchicago-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.1.0",
+    "@capacitor/cli": "^7.1.0",
+    "@capacitor/core": "^7.1.0",
+    "@capacitor/geolocation": "^7.1.1",
+    "@capacitor/ios": "^7.1.0",
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
+    "@react-google-maps/api": "^2.20.6",
+    "firebase": "^11.5.0",
+    "next": "^15.2.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.4",
+    "firebase-tools": "^14.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="postcss.config.mjs">
+const config = {
+  plugins: ["@tailwindcss/postcss"],
+};
+
+export default config;
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+</files>
