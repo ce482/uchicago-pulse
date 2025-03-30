@@ -33,6 +33,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "8:00 AM – 2:30 PM",
       Sunday: "8:00 AM – 8:30 PM",
     },
+    busyness: {
+      notBusyCount: 10,
+      somewhatBusyCount: 20,
+      veryBusyCount: 30,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 50,
   },
   {
     id: "cathey",
@@ -44,6 +51,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "8:00 AM – 2:30 PM",
       Sunday: "8:00 AM – 8:30 PM",
     },
+    busyness: {
+      notBusyCount: 15,
+      somewhatBusyCount: 25,
+      veryBusyCount: 10,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 50,
   },
   {
     id: "bartlett",
@@ -55,6 +69,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "8:00 AM – 8:30 PM",
       Sunday: "8:00 AM – 8:30 PM",
     },
+    busyness: {
+      notBusyCount: 30,
+      somewhatBusyCount: 18,
+      veryBusyCount: 12,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 50,
   },
   {
     id: "woodlawn",
@@ -66,6 +87,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "8:00 AM – 8:30 PM",
       Sunday: "8:00 AM – 8:30 PM",
     },
+    busyness: {
+      notBusyCount: 12,
+      somewhatBusyCount: 22,
+      veryBusyCount: 7,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 50,
   },
 
   // Cafes
@@ -79,6 +107,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "12:00 PM – 6:00 PM",
       Sunday: "12:00 PM – 4:00 PM",
     },
+    busyness: {
+      notBusyCount: 20,
+      somewhatBusyCount: 10,
+      veryBusyCount: 3,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "gordon",
@@ -88,6 +123,13 @@ export const diningLocations: DiningLocation[] = [
     hours: {
       "Monday-Friday": "8:00 AM – 3:00 PM",
     },
+    busyness: {
+      notBusyCount: 3,
+      somewhatBusyCount: 7,
+      veryBusyCount: 2,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "harris",
@@ -98,6 +140,13 @@ export const diningLocations: DiningLocation[] = [
       "Monday-Thursday": "8:00 AM – 4:00 PM",
       Friday: "8:00 AM – 2:30 PM",
     },
+    busyness: {
+      notBusyCount: 10,
+      somewhatBusyCount: 8,
+      veryBusyCount: 2,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "hutchinson",
@@ -109,6 +158,13 @@ export const diningLocations: DiningLocation[] = [
       Friday: "11:00 AM – 3:00 PM",
       Saturday: "11:00 AM – 4:00 PM",
     },
+    busyness: {
+      notBusyCount: 6,
+      somewhatBusyCount: 12,
+      veryBusyCount: 30,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "peaches",
@@ -116,14 +172,17 @@ export const diningLocations: DiningLocation[] = [
     type: "cafe",
     coordinates: { lat: 41.791065292061596, lng: -87.60267307937721 },
     hours: {
-      Monday: "8:00 AM - 4:00 PM",
-      Tuesday: "8:00 AM - 4:00 PM",
-      Wednesday: "8:00 AM - 4:00 PM",
-      Thursday: "8:00 AM - 4:00 PM",
-      Friday: "8:00 AM - 4:00 PM",
+      "Monday-Friday": "8:00 AM - 4:00 PM",
       Saturday: "Closed",
       Sunday: "Closed",
     },
+    busyness: {
+      notBusyCount: 10,
+      somewhatBusyCount: 5,
+      veryBusyCount: 1,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "quantum",
@@ -133,6 +192,13 @@ export const diningLocations: DiningLocation[] = [
     hours: {
       "Monday-Friday": "8:00 AM – 3:00 PM",
     },
+    busyness: {
+      notBusyCount: 5,
+      somewhatBusyCount: 4,
+      veryBusyCount: 1,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "pret",
@@ -143,6 +209,13 @@ export const diningLocations: DiningLocation[] = [
       "Monday-Friday": "8:00 AM – 11:00 PM",
       "Saturday-Sunday": "9:00 AM – 11:00 PM",
     },
+    busyness: {
+      notBusyCount: 10,
+      somewhatBusyCount: 15,
+      veryBusyCount: 20,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "starbucks",
@@ -152,6 +225,13 @@ export const diningLocations: DiningLocation[] = [
     hours: {
       "Monday-Friday": "7:00 AM – 6:00 PM",
     },
+    busyness: {
+      notBusyCount: 8,
+      somewhatBusyCount: 12,
+      veryBusyCount: 20,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "french-press",
@@ -162,6 +242,13 @@ export const diningLocations: DiningLocation[] = [
       "Monday-Friday": "8:00 AM – 6:00 PM",
       "Saturday-Sunday": "9:00 AM – 6:00 PM",
     },
+    busyness: {
+      notBusyCount: 11,
+      somewhatBusyCount: 10,
+      veryBusyCount: 2,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "cobb",
@@ -171,6 +258,13 @@ export const diningLocations: DiningLocation[] = [
     hours: {
       "Monday-Friday": "9:00 AM – 4:00 PM",
     },
+    busyness: {
+      notBusyCount: 4,
+      somewhatBusyCount: 6,
+      veryBusyCount: 1,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "ex-libris",
@@ -183,6 +277,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "11:00 AM – 5:00 PM",
       Sunday: "11:00 AM – 10:30 PM",
     },
+    busyness: {
+      notBusyCount: 6,
+      somewhatBusyCount: 9,
+      veryBusyCount: 10,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "harper",
@@ -195,6 +296,13 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "Closed",
       Sunday: "12:00 PM – 5:00 PM",
     },
+    busyness: {
+      notBusyCount: 5,
+      somewhatBusyCount: 8,
+      veryBusyCount: 2,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
   {
     id: "hallowed-grounds",
@@ -208,5 +316,94 @@ export const diningLocations: DiningLocation[] = [
       Saturday: "12:00 PM – 5:30 PM",
       Sunday: "12:00 PM – 9:00 PM",
     },
+    busyness: {
+      notBusyCount: 4,
+      somewhatBusyCount: 7,
+      veryBusyCount: 2,
+      lastUpdated: "2023-10-01T12:00:00Z",
+    },
+    radius: 30,
   },
 ];
+
+/**
+ * Calculates the busyness level for a dining location based on its busyness data.
+ * @param busyness - The busyness data of the dining location.
+ * @returns The busyness level as a string ("not busy", "somewhat busy", "very busy") or "unknown" if data is missing.
+ */
+export function getBusynessLevel(busyness?: {
+  notBusyCount: number;
+  somewhatBusyCount: number;
+  veryBusyCount: number;
+}): BusynessLevel | "unknown" {
+  if (!busyness) return "unknown";
+
+  const { notBusyCount, somewhatBusyCount, veryBusyCount } = busyness;
+  const maxCount = Math.max(notBusyCount, somewhatBusyCount, veryBusyCount);
+
+  if (maxCount === notBusyCount) return "not busy";
+  if (maxCount === somewhatBusyCount) return "somewhat busy";
+  if (maxCount === veryBusyCount) return "very busy";
+
+  return "unknown";
+}
+
+/**
+ * Logs the busyness level for all dining locations with a visual busy meter.
+ */
+export function displayBusyMeter() {
+  diningLocations.forEach((location) => {
+    const busynessLevel = getBusynessLevel(location.busyness);
+    const meter = createBusyMeter(location.busyness);
+    console.log(
+      `${location.name} (${location.type}): ${busynessLevel} ${meter}`
+    );
+  });
+}
+
+/**
+ * Creates a visual busy meter based on the busyness data.
+ * @param busyness - The busyness data of the dining location.
+ * @returns A string representing the busy meter (e.g., "███░░").
+ */
+function createBusyMeter(busyness?: {
+  notBusyCount: number;
+  somewhatBusyCount: number;
+  veryBusyCount: number;
+}): string {
+  if (!busyness) return "░░░░░"; // Default empty meter if no data is available.
+
+  const total =
+    busyness.notBusyCount + busyness.somewhatBusyCount + busyness.veryBusyCount;
+  if (total === 0) return "░░░░░"; // Default empty meter if total is zero.
+
+  const notBusyRatio = Math.round((busyness.notBusyCount / total) * 5);
+  const somewhatBusyRatio = Math.round(
+    (busyness.somewhatBusyCount / total) * 5
+  );
+  const veryBusyRatio = Math.round((busyness.veryBusyCount / total) * 5);
+
+  return (
+    "█".repeat(notBusyRatio) + // Filled blocks for "not busy"
+    "▒".repeat(somewhatBusyRatio) + // Medium blocks for "somewhat busy"
+    "░".repeat(veryBusyRatio)
+  ) // Light blocks for "very busy"
+    .padEnd(5, "░"); // Ensure the meter is always 5 characters long.
+}
+
+/**
+ * Returns the busyness level and visual busy meter for a dining location.
+ * @param location - The dining location.
+ * @returns An object containing the busyness level and visual busy meter.
+ */
+export function getBusyMeterForLocation(location: DiningLocation): {
+  level: BusynessLevel | "unknown";
+  meter: string;
+} {
+  const level = getBusynessLevel(location.busyness);
+  const meter = createBusyMeter(location.busyness);
+  return { level, meter };
+}
+
+// Automatically display the busy meter when this module is loaded.
+displayBusyMeter();
